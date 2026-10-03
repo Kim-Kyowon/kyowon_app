@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>자산현황</title>
+  
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); 
+      min-height: 100vh; 
+    }
+    
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      z-index: 10;
+    }
+    .header-content {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .title { font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .header-action { display: flex; gap: 6px; }
+    .btn-header {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease;
+    }
+    .btn-header:active { opacity: 0.85; }
+    .btn-header-primary {
+      background: var(--primary) !important;
+    }
+
+    /* 예쁜 삭제 버튼 스타일 */
+    .btn-del-item {
+      width: 30px;
+      height: 30px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+      padding: 0;
+    }
+    .btn-del-item:hover, .btn-del-item:active {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #ef4444;
+    }
+
+    /* 자산 추가 모달 */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(3px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      overflow: hidden;
+      transform: translateY(14px);
+      transition: transform 0.2s ease;
+    }
+    .modal-overlay.open .modal-card {
+      transform: translateY(0);
+    }
+    .modal-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.15rem;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .category-chip-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .chip {
+      padding: 8px 4px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .chip.active {
+      background: #eff6ff;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .chip-debt.active {
+      background: #fef2f2;
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .modal-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      color: var(--text);
+      outline: none;
+      background: #f8fafc;
+      box-sizing: border-box;
+    }
+    .modal-input:focus {
+      background: #fff;
+      border-color: var(--primary);
+    }
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+      padding: 12px 18px 18px;
+    }
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid var(--border);
+      background: #f1f5f9;
+      color: var(--muted);
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-modal-submit {
+      flex: 2;
+      padding: 11px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+
+    /* 총 순자산 대형 카드 */
+    .net-worth-card {
+      background: #0f172a;
+      color: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+    }
+    .net-worth-label {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .net-worth-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 7px;
+    }
+    .net-pension-amount {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #93c5fd;
+      letter-spacing: normal;
+    }
+    .net-worth-sub {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      padding-top: 14px;
+      border-top: 1px solid #1e293b;
+    }
+    .sub-stat-label {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-bottom: 2px;
+    }
+    .sub-stat-val {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+    .val-asset { color: #38bdf8; }
+    .val-debt { color: #f87171; }
+
+    /* 자산 카테고리 카드 */
+    .category-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .category-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .category-icon {
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+    }
+    .category-sum {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .category-sum.debt-sum {
+      color: var(--danger);
+    }
+
+    /* 자산 항목 리스트 */
+    .asset-item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .asset-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .asset-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+    .asset-input-wrap {
+      width: 145px;
+    }
+    .asset-input {
+      width: 100%;
+      text-align: right;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      background: #f8fafc;
+      outline: none;
+    }
+    .asset-input:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    /* 스냅샷 히스토리 */
+    .history-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .history-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .history-date { color: var(--muted); font-weight: 600; }
+    .history-net { font-weight: 700; color: var(--text); }
+    .btn-hist-del {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+    .btn-hist-del:hover { color: var(--danger); }
+
+    /* 하단 글로벌 탭 네비게이터 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .bottom-nav-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      height: 56px;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: color 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-tab:active { background: #f8fafc; }
+    .nav-tab.active { color: var(--primary); }
+    .nav-tab svg { width: 20px; height: 20px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="title">자산현황</div>
+      <div class="header-action">
+        <button type="button" class="btn-header btn-header-primary" onclick="openAddAssetModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          자산 추가
+        </button>
+        <button type="button" class="btn-header" onclick="saveSnapshot()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+          스냅샷
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 새 자산 항목 추가 모달 -->
+  <div class="modal-overlay" id="addAssetModal" onclick="closeAddAssetModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">새 자산 항목 추가</div>
+        <button type="button" class="modal-close" onclick="closeAddAssetModal()">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <label class="form-label">자산 분류 선택</label>
+        <div class="category-chip-group">
+          <button type="button" class="chip active" data-cat="deposit" onclick="selectModalCategory('deposit')">예금</button>
+          <button type="button" class="chip" data-cat="savings" onclick="selectModalCategory('savings')">적금</button>
+          <button type="button" class="chip" data-cat="stock" onclick="selectModalCategory('stock')">주식</button>
+          <button type="button" class="chip" data-cat="crypto" onclick="selectModalCategory('crypto')">가상자산</button>
+          <button type="button" class="chip" data-cat="realEstate" onclick="selectModalCategory('realEstate')">부동산</button>
+          <button type="button" class="chip chip-debt" data-cat="debt" onclick="selectModalCategory('debt')">대출(부채)</button>
+        </div>
+
+        <label class="form-label" for="modalItemName">항목 / 계좌명</label>
+        <input type="text" id="modalItemName" class="modal-input" placeholder="예: 국민은행 정기예금, 토스증권 등" />
+
+        <label class="form-label" for="modalItemVal">초기 금액 (원)</label>
+        <input type="text" id="modalItemVal" inputmode="numeric" class="modal-input" placeholder="0" oninput="formatModalInput(this)" onkeydown="if(event.key==='Enter') submitAddAsset()" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeAddAssetModal()">취소</button>
+        <button type="button" class="btn-modal-submit" onclick="submitAddAsset()">추가하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 총 순자산 대형 카드 -->
+    <div class="net-worth-card">
+      <div class="net-worth-label">내 순자산 (총자산 - 대출)</div>
+      <div class="net-worth-value" id="netWorthDisplay">
+        <span>0</span>
+        <span class="net-pension-amount">(연금자산 0)</span>
+      </div>
+      <div class="net-worth-sub">
+        <div>
+          <div class="sub-stat-label">총 자산</div>
+          <div class="sub-stat-val val-asset" id="totalAssetDisplay">0 원</div>
+        </div>
+        <div>
+          <div class="sub-stat-label">총 대출(부채)</div>
+          <div class="sub-stat-val val-debt" id="totalDebtDisplay">0 원</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 예금 -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+          <span>예금</span>
+        </div>
+        <div class="category-sum" id="sumDeposit">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listDeposit"></div>
+    </div>
+
+    <!-- 2. 적금 -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+          </div>
+          <span>적금</span>
+        </div>
+        <div class="category-sum" id="sumSavings">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listSavings"></div>
+    </div>
+
+    <!-- 3. 주식 (개인연금, 회사지원 연금, DC, IRP, ISA) -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+              <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+          </div>
+          <span>주식 (연금 / ISA)</span>
+        </div>
+        <div class="category-sum" id="sumStock">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listStock"></div>
+    </div>
+
+    <!-- 4. 가상자산 (업비트 계좌) -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5 1.5 0 2.5 1 2.5 2.5s-1 2.5-2.5 2.5h-2.5"></path>
+              <line x1="9.5" y1="12" x2="14.5" y2="12"></line>
+              <line x1="9.5" y1="15.5" x2="13" y2="15.5"></line>
+            </svg>
+          </div>
+          <span>가상자산</span>
+        </div>
+        <div class="category-sum" id="sumCrypto">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listCrypto"></div>
+    </div>
+
+    <!-- 5. 부동산 -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"></path>
+              <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
+              <line x1="9" y1="7" x2="9.01" y2="7"></line>
+              <line x1="15" y1="7" x2="15.01" y2="7"></line>
+              <line x1="9" y1="11" x2="9.01" y2="11"></line>
+              <line x1="15" y1="11" x2="15.01" y2="11"></line>
+            </svg>
+          </div>
+          <span>부동산</span>
+        </div>
+        <div class="category-sum" id="sumRealEstate">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listRealEstate"></div>
+    </div>
+
+    <!-- 6. 대출 / 부채 (차감) -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </div>
+          <span>대출 · 부채 (차감)</span>
+        </div>
+        <div class="category-sum debt-sum" id="sumDebt">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listDebt"></div>
+    </div>
+
+    <!-- 월별 자산 스냅샷 히스토리 -->
+    <div class="history-card">
+      <div class="history-header">
+        <div class="history-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>자산 추이 히스토리</span>
+        </div>
+      </div>
+      <div class="history-list" id="historyListContainer"></div>
+    </div>
+  </div>
+
+  <!-- 하단 글로벌 탭 네비게이터 -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="../index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>홈</span>
+      </a>
+      <a href="../asset/index.html" class="nav-tab active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        <span>자산현황</span>
+      </a>
+      <a href="../wellbeing/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+          <line x1="6" y1="1" x2="6" y2="4"></line>
+          <line x1="10" y1="1" x2="10" y2="4"></line>
+          <line x1="14" y1="1" x2="14" y2="4"></line>
+        </svg>
+        <span>웰빙클럽</span>
+      </a>
+      <a href="../apt/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span>임장노트</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    const STORAGE_KEY_ASSETS = "hub_custom_assets_v2";
+    const STORAGE_KEY_SNAPSHOTS = "hub_custom_snapshots_v2";
+
+    // 사용자 요청 분류 기준: 예금 / 적금 / 주식 / 가상자산 / 부동산 + 대출
+    const DEFAULT_CONFIG = {
+      deposit: [
+        { id: "dep_woori", name: "우리은행 계좌", value: 0 },
+        { id: "dep_1", name: "주거래 입출금", value: 0 },
+        { id: "dep_2", name: "비상금 CMA/MMF", value: 0 }
+      ],
+      savings: [
+        { id: "sav_1", name: "정기 적금", value: 0 },
+        { id: "sav_2", name: "주택 청약", value: 0 }
+      ],
+      stock: [
+        { id: "stk_1", name: "개인연금", value: 0 },
+        { id: "stk_2", name: "회사지원 연금", value: 0 },
+        { id: "stk_3", name: "퇴직연금 DC", value: 0 },
+        { id: "stk_4", name: "퇴직연금 IRP", value: 0 },
+        { id: "stk_5", name: "ISA 계좌", value: 0 }
+      ],
+      crypto: [
+        { id: "cry_1", name: "업비트 계좌", value: 0 }
+      ],
+      realEstate: [
+        { id: "re_1", name: "거주 부동산 (아파트)", value: 0 },
+        { id: "re_2", name: "기타 부동산 / 보증금", value: 0 }
+      ],
+      debt: [
+        { id: "deb_1", name: "주택담보대출", value: 0 },
+        { id: "deb_2", name: "신용대출 / 기타", value: 0 }
+      ]
+    };
+
+    let assetData = {};
+
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY_ASSETS);
+      if (raw) {
+        try {
+          assetData = JSON.parse(raw);
+        } catch (e) {
+          assetData = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+        }
+      } else {
+        assetData = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+      }
+      
+      ["deposit", "savings", "stock", "crypto", "realEstate", "debt"].forEach(cat => {
+        if (!assetData[cat]) assetData[cat] = DEFAULT_CONFIG[cat];
+      });
+
+      // 우리은행 계좌 보정 (기존 저장 데이터에 없을 경우 자동 추가)
+      if (!assetData.deposit.some(x => x.name.includes("우리은행"))) {
+        assetData.deposit.unshift({ id: "dep_woori", name: "우리은행 계좌", value: 0 });
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assetData));
+      recalculate();
+    }
+
+    function formatNumberWon(val) {
+      if (!val) return "0 원";
+      return Math.round(val).toLocaleString("ko-KR") + " 원";
+    }
+
+    function parseInputVal(str) {
+      if (!str) return 0;
+      const clean = String(str).replace(/,/g, "").replace(/원/g, "").trim();
+      if (!clean) return 0;
+
+      if (clean.includes("억") || clean.includes("만")) {
+        const matches = [...clean.matchAll(/(\d+(?:\.\d+)?)\s*(억|만)?/g)];
+        let total = 0;
+        for (const match of matches) {
+          const val = Number(match[1]);
+          if (!Number.isFinite(val)) continue;
+          total += val * (match[2] === "억" ? 100000000 : match[2] === "만" ? 10000 : 1);
+        }
+        return total;
+      }
+      const num = Number(clean);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function renderCategory(catKey, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      assetData[catKey].forEach(item => {
+        const row = document.createElement("div");
+        row.className = "asset-row";
+        
+        const displayVal = item.value ? item.value.toLocaleString("ko-KR") : "";
+        row.innerHTML = `
+          <span class="asset-name">${escapeHtml(item.name)}</span>
+          <div style="display:flex; align-items:center; gap:4px;">
+            <div class="asset-input-wrap">
+              <input type="text" inputmode="numeric" class="asset-input" placeholder="0" 
+                value="${displayVal}"
+                onfocus="this.select()"
+                oninput="onAssetInput(this, '${catKey}', '${item.id}')"
+                onblur="onAssetBlur(this, '${catKey}', '${item.id}')"
+                onkeydown="if(event.key==='Enter') this.blur()" />
+            </div>
+            <button type="button" class="btn-del-item" onclick="deleteItem('${catKey}', '${item.id}')" title="삭제" aria-label="삭제">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    const CONTAINER_MAP = {
+      deposit: "listDeposit",
+      savings: "listSavings",
+      stock: "listStock",
+      crypto: "listCrypto",
+      realEstate: "listRealEstate",
+      debt: "listDebt"
+    };
+
+    let selectedModalCat = "deposit";
+
+    function openAddAssetModal(defaultCat = "deposit") {
+      selectedModalCat = defaultCat;
+      document.querySelectorAll(".chip").forEach(chip => {
+        if (chip.getAttribute("data-cat") === defaultCat) {
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+        }
+      });
+      document.getElementById("modalItemName").value = "";
+      document.getElementById("modalItemVal").value = "";
+      
+      const modal = document.getElementById("addAssetModal");
+      modal.classList.add("open");
+      setTimeout(() => {
+        document.getElementById("modalItemName").focus();
+      }, 80);
+    }
+
+    function closeAddAssetModal(e) {
+      if (e && e.target !== e.currentTarget && !e.target.classList.contains("modal-close") && !e.target.classList.contains("btn-modal-cancel")) return;
+      document.getElementById("addAssetModal").classList.remove("open");
+    }
+
+    function selectModalCategory(catKey) {
+      selectedModalCat = catKey;
+      document.querySelectorAll(".chip").forEach(chip => {
+        chip.classList.toggle("active", chip.getAttribute("data-cat") === catKey);
+      });
+    }
+
+    function formatModalInput(input) {
+      const onlyNums = input.value.replace(/[^0-9]/g, "");
+      if (!onlyNums) {
+        input.value = "";
+        return;
+      }
+      const num = parseInt(onlyNums, 10);
+      input.value = num.toLocaleString("ko-KR");
+    }
+
+    function submitAddAsset() {
+      const nameInput = document.getElementById("modalItemName");
+      const valInput = document.getElementById("modalItemVal");
+      const name = nameInput.value.trim();
+      
+      if (!name) {
+        alert("항목 또는 계좌명을 입력해주세요.");
+        nameInput.focus();
+        return;
+      }
+
+      const numVal = parseInputVal(valInput.value);
+
+      if (!assetData[selectedModalCat]) {
+        assetData[selectedModalCat] = [];
+      }
+
+      assetData[selectedModalCat].push({
+        id: "item_" + Date.now(),
+        name: name,
+        value: numVal
+      });
+
+      saveData();
+      renderCategory(selectedModalCat, CONTAINER_MAP[selectedModalCat]);
+      closeAddAssetModal();
+    }
+
+    function deleteItem(catKey, itemId) {
+      const item = assetData[catKey].find(x => x.id === itemId);
+      if (!item) return;
+      if (!confirm(`[${item.name}] 항목을 삭제하시겠습니까?`)) return;
+
+      assetData[catKey] = assetData[catKey].filter(x => x.id !== itemId);
+      saveData();
+      renderCategory(catKey, CONTAINER_MAP[catKey]);
+    }
+
+    // 숫자 입력 시 실시간 천단위 콤마 포맷팅 & 실시간 합산
+    function onAssetInput(input, catKey, itemId) {
+      const originalValue = input.value;
+      const cursorPosition = input.selectionStart || 0;
+
+      // 숫자 이외의 문자 제거
+      const onlyNums = originalValue.replace(/[^0-9]/g, "");
+
+      if (!onlyNums) {
+        input.value = "";
+        updateAssetItem(catKey, itemId, 0);
+        return;
+      }
+
+      // 맨 앞의 불필요한 연속 0 제거
+      const cleanedNumStr = onlyNums.replace(/^0+(?!$)/, "");
+      const numVal = parseInt(cleanedNumStr, 10) || 0;
+      const formatted = numVal.toLocaleString("ko-KR");
+
+      // 입력 전후 길이 차이로 커서 위치 보정
+      const lengthDiff = formatted.length - originalValue.length;
+      input.value = formatted;
+
+      let newCursor = cursorPosition + lengthDiff;
+      if (newCursor < 0) newCursor = 0;
+      if (newCursor > formatted.length) newCursor = formatted.length;
+      
+      try {
+        input.setSelectionRange(newCursor, newCursor);
+      } catch (e) {}
+
+      updateAssetItem(catKey, itemId, numVal);
+    }
+
+    function updateAssetItem(catKey, itemId, val) {
+      const target = assetData[catKey].find(x => x.id === itemId);
+      if (target) {
+        target.value = val;
+        recalculate();
+      }
+    }
+
+    function onAssetBlur(input, catKey, itemId) {
+      // 한글 단위(억, 만 등) 입력 대응 및 최종 저장
+      const val = parseInputVal(input.value);
+      const target = assetData[catKey].find(x => x.id === itemId);
+      if (target) {
+        target.value = val;
+        input.value = val ? val.toLocaleString("ko-KR") : "";
+        saveData();
+      }
+    }
+
+    function recalculate() {
+      let sumDeposit = 0;
+      let sumSavings = 0;
+      let sumStock = 0;
+      let sumCrypto = 0;
+      let sumRealEstate = 0;
+      let sumDebt = 0;
+
+      assetData.deposit.forEach(x => sumDeposit += (x.value || 0));
+      assetData.savings.forEach(x => sumSavings += (x.value || 0));
+      assetData.stock.forEach(x => sumStock += (x.value || 0));
+      assetData.crypto.forEach(x => sumCrypto += (x.value || 0));
+      assetData.realEstate.forEach(x => sumRealEstate += (x.value || 0));
+      assetData.debt.forEach(x => sumDebt += (x.value || 0));
+
+      const totalAsset = sumDeposit + sumSavings + sumStock + sumCrypto + sumRealEstate;
+      const netWorth = totalAsset - sumDebt;
+
+      // 노후 대비 연금자산 별도 합산 (개인연금, 회사지원 연금, 퇴직연금 DC, 퇴직연금 IRP 등)
+      let sumPension = 0;
+      Object.keys(assetData).forEach(cat => {
+        if (cat === "debt") return;
+        (assetData[cat] || []).forEach(item => {
+          const nm = (item.name || "").toLowerCase();
+          if (nm.includes("연금") || nm.includes("irp") || nm.includes("dc") || nm.includes("퇴직")) {
+            sumPension += (item.value || 0);
+          }
+        });
+      });
+
+      document.getElementById("sumDeposit").innerText = formatNumberWon(sumDeposit);
+      document.getElementById("sumSavings").innerText = formatNumberWon(sumSavings);
+      document.getElementById("sumStock").innerText = formatNumberWon(sumStock);
+      document.getElementById("sumCrypto").innerText = formatNumberWon(sumCrypto);
+      document.getElementById("sumRealEstate").innerText = formatNumberWon(sumRealEstate);
+      document.getElementById("sumDebt").innerText = formatNumberWon(sumDebt);
+
+      document.getElementById("totalAssetDisplay").innerText = formatNumberWon(totalAsset);
+      document.getElementById("totalDebtDisplay").innerText = formatNumberWon(sumDebt);
+
+      const netWorthFormatted = Math.round(netWorth).toLocaleString("ko-KR");
+      const pensionFormatted = Math.round(sumPension).toLocaleString("ko-KR");
+
+      document.getElementById("netWorthDisplay").innerHTML = `
+        <span>${netWorthFormatted}</span>
+        <span class="net-pension-amount">(연금자산 ${pensionFormatted})</span>
+      `;
+    }
+
+    // 스냅샷 기능
+    function getSnapshots() {
+      const raw = localStorage.getItem(STORAGE_KEY_SNAPSHOTS);
+      if (raw) {
+        try { return JSON.parse(raw); } catch (e) {}
+      }
+      return [];
+    }
+
+    function saveSnapshot() {
+      let sumDeposit = 0, sumSavings = 0, sumStock = 0, sumCrypto = 0, sumRealEstate = 0, sumDebt = 0;
+      assetData.deposit.forEach(x => sumDeposit += (x.value || 0));
+      assetData.savings.forEach(x => sumSavings += (x.value || 0));
+      assetData.stock.forEach(x => sumStock += (x.value || 0));
+      assetData.crypto.forEach(x => sumCrypto += (x.value || 0));
+      assetData.realEstate.forEach(x => sumRealEstate += (x.value || 0));
+      assetData.debt.forEach(x => sumDebt += (x.value || 0));
+
+      const totalAsset = sumDeposit + sumSavings + sumStock + sumCrypto + sumRealEstate;
+      const netWorth = totalAsset - sumDebt;
+
+      const now = new Date();
+      const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, "0")}.${String(now.getDate()).padStart(2, "0")}`;
+
+      const snapshots = getSnapshots();
+      const existingIdx = snapshots.findIndex(s => s.date === dateStr);
+      const snapObj = {
+        id: Date.now(),
+        date: dateStr,
+        totalAsset,
+        totalDebt: sumDebt,
+        netWorth
+      };
+
+      if (existingIdx >= 0) {
+        snapshots[existingIdx] = snapObj;
+      } else {
+        snapshots.unshift(snapObj);
+      }
+
+      localStorage.setItem(STORAGE_KEY_SNAPSHOTS, JSON.stringify(snapshots));
+      renderSnapshots();
+      alert(`[${dateStr}] 기준 순자산(${formatNumberWon(netWorth)})이 저장되었습니다.`);
+    }
+
+    function renderSnapshots() {
+      const snapshots = getSnapshots();
+      const container = document.getElementById("historyListContainer");
+      if (snapshots.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding: 12px; color: var(--muted); font-size: 0.82rem;">상단의 [자산 스냅샷 저장]을 누르면 일자별 자산 변화가 기록됩니다.</div>';
+        return;
+      }
+
+      container.innerHTML = "";
+      snapshots.forEach((snap, idx) => {
+        const item = document.createElement("div");
+        item.className = "history-item";
+
+        let diffHtml = "";
+        if (idx < snapshots.length - 1) {
+          const prev = snapshots[idx + 1];
+          const diff = snap.netWorth - prev.netWorth;
+          if (diff > 0) {
+            diffHtml = `<span style="font-size:0.75rem; color:#dc2626; font-weight:700;">(+${formatNumberWon(diff)})</span>`;
+          } else if (diff < 0) {
+            diffHtml = `<span style="font-size:0.75rem; color:#2563eb; font-weight:700;">(${formatNumberWon(diff)})</span>`;
+          }
+        }
+
+        item.innerHTML = `
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="history-date">${snap.date}</span>
+            ${diffHtml}
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span class="history-net">${formatNumberWon(snap.netWorth)}</span>
+            <button type="button" class="btn-del-item" style="width:26px; height:26px;" onclick="deleteSnapshot(${snap.id})" title="기록 삭제" aria-label="기록 삭제">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function deleteSnapshot(id) {
+      if (!confirm("해당 자산 기록을 삭제하시겠습니까?")) return;
+      let snapshots = getSnapshots();
+      snapshots = snapshots.filter(s => s.id !== id);
+      localStorage.setItem(STORAGE_KEY_SNAPSHOTS, JSON.stringify(snapshots));
+      renderSnapshots();
+    }
+
+    function escapeHtml(str) {
+      return (str || "").replace(/[&<>"']/g, m => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[m]));
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      loadData();
+      renderCategory("deposit", "listDeposit");
+      renderCategory("savings", "listSavings");
+      renderCategory("stock", "listStock");
+      renderCategory("crypto", "listCrypto");
+      renderCategory("realEstate", "listRealEstate");
+      renderCategory("debt", "listDebt");
+      recalculate();
+      renderSnapshots();
+    });
+  </script>
+</body>
+</html>

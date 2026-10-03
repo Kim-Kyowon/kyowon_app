@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>마이 허브</title>
+  
+  <!-- PWA 매니페스트 및 테마 -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#1e293b" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/9079/9079388.png" />
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --tag-active-bg: #eff6ff;
+      --tag-active-text: #2563eb;
+      --tag-wait-bg: #f1f5f9;
+      --tag-wait-text: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); 
+      min-height: 100vh; 
+    }
+    
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      z-index: 10;
+    }
+    .header-content {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-icon-svg {
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+    .brand-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .service-count {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .service-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .service-card:active {
+      background: #f8fafc;
+      transform: scale(0.99);
+    }
+
+    .service-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .service-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .icon-box-apt { background: #eff6ff; color: #2563eb; }
+    .icon-box-wellbeing { background: #fef3c7; color: #d97706; }
+    .icon-box-invest { background: #f0fdf4; color: #16a34a; }
+
+    .service-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .service-name {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .service-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+    .badge-active {
+      background: var(--tag-active-bg);
+      color: var(--tag-active-text);
+    }
+    .badge-ready {
+      background: var(--tag-wait-bg);
+      color: var(--tag-wait-text);
+    }
+
+    .service-arrow {
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      padding-left: 8px;
+    }
+
+    /* 백업 관리 섹션 */
+    .backup-section {
+      margin-top: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .backup-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .backup-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .backup-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .backup-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-backup {
+      flex: 1;
+      padding: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-backup:active {
+      background: #f1f5f9;
+    }
+
+    /* 하단 글로벌 탭 네비게이터 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .bottom-nav-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      height: 56px;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      transition: color 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-tab:active {
+      background: #f8fafc;
+    }
+    .nav-tab.active {
+      color: var(--primary);
+    }
+    .nav-tab svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="./index.html" class="brand">
+        <div class="brand-icon-svg">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+            <rect x="9" y="9" width="6" height="6"></rect>
+            <line x1="9" y1="1" x2="9" y2="4"></line>
+            <line x1="15" y1="1" x2="15" y2="4"></line>
+            <line x1="9" y1="20" x2="9" y2="23"></line>
+            <line x1="15" y1="20" x2="15" y2="23"></line>
+            <line x1="20" y1="9" x2="23" y2="9"></line>
+            <line x1="20" y1="14" x2="23" y2="14"></line>
+            <line x1="1" y1="9" x2="4" y2="9"></line>
+            <line x1="1" y1="14" x2="4" y2="14"></line>
+          </svg>
+        </div>
+        <span class="brand-title">나만의 서비스 허브</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="section-header">
+      <div class="section-title">서비스 목록</div>
+      <div class="service-count">3개 서비스</div>
+    </div>
+
+    <div class="service-grid">
+      <!-- 1. 자산현황 -->
+      <a href="./asset/index.html" class="service-card">
+        <div class="service-left">
+          <div class="service-icon-box icon-box-invest">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <div class="service-info">
+            <div class="service-name">
+              자산현황
+              <span class="badge badge-active">이용가능</span>
+            </div>
+            <div class="service-desc">예금·적금·주식·가상자산·부동산 순자산 관리</div>
+          </div>
+        </div>
+        <div class="service-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- 2. 웰빙클럽 실적관리 -->
+      <a href="./wellbeing/index.html" class="service-card">
+        <div class="service-left">
+          <div class="service-icon-box icon-box-wellbeing">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+              <line x1="6" y1="1" x2="6" y2="4"></line>
+              <line x1="10" y1="1" x2="10" y2="4"></line>
+              <line x1="14" y1="1" x2="14" y2="4"></line>
+            </svg>
+          </div>
+          <div class="service-info">
+            <div class="service-name">
+              웰빙클럽 실적관리
+              <span class="badge badge-active">이용가능</span>
+            </div>
+            <div class="service-desc">스포츠/컬처 월간 한도 체크 및 원터치 이용 등록</div>
+          </div>
+        </div>
+        <div class="service-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+
+      <!-- 3. 아파트 임장 체크리스트 -->
+      <a href="./apt/index.html" class="service-card">
+        <div class="service-left">
+          <div class="service-icon-box icon-box-apt">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <div class="service-info">
+            <div class="service-name">
+              아파트 임장 체크리스트
+              <span class="badge badge-active">이용가능</span>
+            </div>
+            <div class="service-desc">실시간 취득세·복비·평수 계산 및 현장 점검 기록</div>
+          </div>
+        </div>
+        <div class="service-arrow">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </a>
+    </div>
+
+    <!-- 데이터 통합 백업 및 복원 -->
+    <div class="backup-section">
+      <div class="backup-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span class="backup-title">데이터 통합 백업 및 복원</span>
+      </div>
+      <div class="backup-desc">전체 데이터를 단일 파일로 안전하게 보관하세요.</div>
+      <div class="backup-btns">
+        <button type="button" class="btn-backup" onclick="exportAllData()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          전체 백업
+        </button>
+        <button type="button" class="btn-backup" onclick="document.getElementById('importFile').click()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          파일 복원
+        </button>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importAllData(event)" />
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 글로벌 탭 네비게이터 -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="./index.html" class="nav-tab active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>홈</span>
+      </a>
+      <a href="./asset/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        <span>자산현황</span>
+      </a>
+      <a href="./wellbeing/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+          <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+          <line x1="6" y1="1" x2="6" y2="4"></line>
+          <line x1="10" y1="1" x2="10" y2="4"></line>
+          <line x1="14" y1="1" x2="14" y2="4"></line>
+        </svg>
+        <span>웰빙클럽</span>
+      </a>
+      <a href="./apt/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+        <span>임장노트</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+          .then(reg => console.log('SW 등록 성공:', reg.scope))
+          .catch(err => console.error('SW 등록 실패:', err));
+      });
+    }
+
+    function exportAllData() {
+      const backup = {
+        exportedAt: new Date().toISOString(),
+        version: 1,
+        data: {}
+      };
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        backup.data[key] = localStorage.getItem(key);
+      }
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      a.href = url;
+      a.download = `kyowon_hub_backup_${dateStr}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importAllData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const json = JSON.parse(e.target.result);
+          if (json && json.data) {
+            if (!confirm('기존 데이터를 덮어쓰고 복원하시겠습니까?')) return;
+            Object.keys(json.data).forEach(k => {
+              localStorage.setItem(k, json.data[k]);
+            });
+            alert('성공적으로 데이터를 복원했습니다!');
+            location.reload();
+          } else {
+            alert('올바른 백업 파일 형식이 아닙니다.');
+          }
+        } catch (err) {
+          alert('파일을 읽는 중 오류가 발생했습니다: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
