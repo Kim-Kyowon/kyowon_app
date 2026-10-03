@@ -1,9 +1,10 @@
-const CACHE_NAME = 'kyowon-hub-v8';
+const CACHE_NAME = 'kyowon-hub-v20';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './asset/index.html',
+  './card/index.html',
   './wellbeing/index.html',
   './apt/index.html'
 ];
