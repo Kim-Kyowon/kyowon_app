@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kyowon-hub-v20';
+const CACHE_NAME = 'kyowon-hub-v22';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,7 +6,8 @@ const ASSETS_TO_CACHE = [
   './asset/index.html',
   './card/index.html',
   './wellbeing/index.html',
-  './apt/index.html'
+  './apt/index.html',
+  './car/index.html'
 ];
 
 self.addEventListener('install', (event) => {
