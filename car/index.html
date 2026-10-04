@@ -939,13 +939,13 @@
     // 소모품 권장 주기 표준 정의 (km 및 개월 수)
     // ----------------------------------------------------
     const CONSUMABLE_DEFS = [
-      { id: "engine_oil", name: "엔진오일", defaultIntervalKm: 10000, defaultIntervalMonths: 12, icon: "🛢️" },
-      { id: "cabin_filter", name: "에어컨필터", defaultIntervalKm: 10000, defaultIntervalMonths: 6, icon: "❄️" },
-      { id: "wiper", name: "와이퍼", defaultIntervalKm: 15000, defaultIntervalMonths: 12, icon: "🌧️" },
-      { id: "tire", name: "타이어 교체/위치", defaultIntervalKm: 40000, defaultIntervalMonths: 36, icon: "🚗" },
-      { id: "brake_pad", name: "브레이크 패드", defaultIntervalKm: 40000, defaultIntervalMonths: 36, icon: "🛑" },
-      { id: "battery", name: "배터리", defaultIntervalKm: 50000, defaultIntervalMonths: 36, icon: "🔋" },
-      { id: "brake_fluid", name: "브레이크 오일", defaultIntervalKm: 40000, defaultIntervalMonths: 24, icon: "💧" },
+      { id: "engine_oil", name: "엔진오일", defaultIntervalKm: 10000, defaultIntervalMonths: 18, icon: "🛢️" },
+      { id: "cabin_filter", name: "에어컨필터", defaultIntervalKm: 10000, defaultIntervalMonths: 12, icon: "❄️" },
+      { id: "wiper", name: "와이퍼", defaultIntervalKm: 15000, defaultIntervalMonths: 18, icon: "🌧️" },
+      { id: "tire", name: "타이어", defaultIntervalKm: 50000, defaultIntervalMonths: 84, icon: "🚗" },
+      { id: "brake_pad", name: "브레이크 패드", defaultIntervalKm: 40000, defaultIntervalMonths: 72, icon: "🛑" },
+      { id: "battery", name: "배터리", defaultIntervalKm: 50000, defaultIntervalMonths: 48, icon: "🔋" },
+      { id: "brake_fluid", name: "브레이크 오일", defaultIntervalKm: 40000, defaultIntervalMonths: 36, icon: "💧" },
       { id: "inspection", name: "자동차 정기검사", defaultIntervalKm: 0, defaultIntervalMonths: 24, icon: "🔍" }
     ];
 
@@ -1074,24 +1074,43 @@
             monthPercent = Math.min(100, Math.round((monthsSince / def.defaultIntervalMonths) * 100));
           }
 
-          percent = Math.max(kmPercent, monthPercent);
-
-          if (percent >= 100) {
-            statusClass = "urgent";
-            statusText = "교체 요망";
-          } else if (percent >= 80) {
-            statusClass = "warn";
-            statusText = "교체 권장";
-          } else {
-            statusClass = "good";
-            statusText = "양호";
-          }
-
           if (def.defaultIntervalKm > 0) {
             const remainKm = Math.max(0, def.defaultIntervalKm - drivenSince);
-            subText = percent >= 100 ? `${drivenSince.toLocaleString()}km 경과` : `${remainKm.toLocaleString()}km 남음`;
+            percent = kmPercent;
+
+            // 기간이 100% 이상 초과된 경우에만 기간 만료 반영
+            if (def.defaultIntervalMonths > 0 && monthPercent >= 100) {
+              percent = Math.max(kmPercent, Math.min(100, monthPercent));
+            }
+
+            if (percent >= 100) {
+              statusClass = "urgent";
+              statusText = "교체 요망";
+              subText = remainKm === 0 ? `${(drivenSince - def.defaultIntervalKm).toLocaleString()}km 초과` : `교체 시기 도래`;
+            } else if (percent >= 80) {
+              statusClass = "warn";
+              statusText = "교체 권장";
+              subText = `${remainKm.toLocaleString()}km 남음`;
+            } else {
+              statusClass = "good";
+              statusText = "양호";
+              subText = `${remainKm.toLocaleString()}km 남음`;
+            }
           } else {
-            subText = lastLog.date ? lastLog.date.slice(2) : "기록됨";
+            // 정기검사 등 기간만 있는 항목
+            percent = monthPercent;
+            if (percent >= 100) {
+              statusClass = "urgent";
+              statusText = "검사 요망";
+            } else if (percent >= 80) {
+              statusClass = "warn";
+              statusText = "검사 권장";
+            } else {
+              statusClass = "good";
+              statusText = "양호";
+            }
+            const remainMonths = Math.max(0, def.defaultIntervalMonths - monthsSince);
+            subText = percent >= 100 ? `${monthsSince}개월 경과` : `${remainMonths}개월 남음`;
           }
         } else {
           statusClass = "none";
