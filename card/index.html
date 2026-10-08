@@ -1163,9 +1163,9 @@
               // 삼성 SFC3 제거
               list = list.filter(c => !c.name.includes("SFC3"));
               // 우리 카드의정석 추가
-              if (!list.some(c => c.name.includes("카드의정석"))) {
-                list.push({ id: "c_woori_jungseok", name: "우리 카드의정석", targetAmount: 0, color: "blue", memo: "실적조건 없음 / 기본 적립·할인" });
-              }
+
+
+
               localStorage.setItem(STORAGE_KEY_CARDS, JSON.stringify(list));
               return list;
             }
@@ -1182,10 +1182,10 @@
               parsed = parsed.filter(c => !c.name.includes("SFC3"));
               modified = true;
             }
-            if (!parsed.some(c => c.name.includes("카드의정석"))) {
-              parsed.push({ id: "c_woori_jungseok", name: "우리 카드의정석", targetAmount: 0, color: "blue", memo: "실적조건 없음 / 기본 적립·할인" });
-              modified = true;
-            }
+
+
+
+
             if (modified) {
               localStorage.setItem(STORAGE_KEY_CARDS, JSON.stringify(parsed));
             }
