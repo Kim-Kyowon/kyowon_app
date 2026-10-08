@@ -684,9 +684,9 @@
             let parsed = JSON.parse(rawCards);
             if (Array.isArray(parsed) && parsed.length > 0) {
               parsed = parsed.filter(c => !c.name.includes("SFC3"));
-              if (!parsed.some(c => c.name.includes("카드의정석"))) {
-                parsed.push({ id: "c_woori_jungseok", name: "우리 카드의정석", targetAmount: 0 });
-              }
+
+
+
               cardList = parsed;
             }
           } catch(e) {}
