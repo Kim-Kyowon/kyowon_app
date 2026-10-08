@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kyowon-hub-v25';
+const CACHE_NAME = 'kyowon-hub-v26';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,7 +6,6 @@ const ASSETS_TO_CACHE = [
   './asset/index.html',
   './card/index.html',
   './wellbeing/index.html',
-  './apt/index.html',
   './car/index.html'
 ];
 

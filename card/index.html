@@ -148,10 +148,15 @@
       font-weight: 700;
       color: var(--text);
     }
-    .btn-add-card {
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-head-action {
       background: transparent;
       border: 1px solid var(--border);
-      color: var(--primary);
+      color: var(--muted);
       font-size: 0.72rem;
       font-weight: 600;
       padding: 3px 8px;
@@ -160,6 +165,91 @@
       align-items: center;
       gap: 3px;
       cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-head-action:active {
+      background: #f1f5f9;
+    }
+    .btn-head-action.active {
+      background: #eff6ff;
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .btn-add-card {
+      color: var(--primary);
+    }
+
+    /* 카드 관리 모드 안내 배너 */
+    .manage-guide-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      color: #1e40af;
+      font-weight: 600;
+    }
+
+    /* 카드 플레이트 내 수정/삭제 버튼 */
+    .btn-plate-edit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+      margin-left: 2px;
+    }
+    .btn-plate-edit:hover, .btn-plate-edit:active {
+      color: var(--primary);
+      background: #e2e8f0;
+    }
+
+    .plate-manage-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 5px;
+      padding-top: 5px;
+      border-top: 1px dashed var(--border);
+    }
+    .btn-plate-action {
+      flex: 1;
+      padding: 4px 0;
+      font-size: 0.68rem;
+      font-weight: 600;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      -webkit-tap-highlight-color: transparent;
+      transition: all 0.12s ease;
+    }
+    .btn-plate-action.btn-plate-del {
+      color: var(--danger);
+      background: #fff5f5;
+      border-color: #fecaca;
+    }
+    .btn-plate-action:active {
+      transform: scale(0.96);
     }
 
     /* 스크롤 없는 초슬림 2열 카드 그리드 (5개 카드 한눈에 표시) */
@@ -671,6 +761,20 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .btn-modal-delete {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: #fee2e2;
+      color: var(--danger);
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-modal-delete:active {
+      background: #fecaca;
+    }
 
     /* 하단 글로벌 탭 네비게이터 */
     .bottom-nav {
@@ -750,13 +854,26 @@
     <!-- 카드 목록 섹션 -->
     <div class="section-head">
       <div class="section-title">내 카드 목록 (선택)</div>
-      <button type="button" class="btn-add-card" onclick="openCardModal()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="12" y1="5" x2="12" y2="19"></line>
-          <line x1="5" y1="12" x2="19" y2="12"></line>
-        </svg>
-        카드 추가
-      </button>
+      <div class="section-actions">
+        <button type="button" class="btn-head-action" id="btnToggleCardManage" onclick="toggleCardManageMode()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          <span id="manageBtnText">관리</span>
+        </button>
+        <button type="button" class="btn-head-action btn-add-card" onclick="openCardModal()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          카드 추가
+        </button>
+      </div>
+    </div>
+    <div id="cardManageBanner" style="display:none;" class="manage-guide-banner">
+      <span>✏️ 카드 관리 모드: 수정 또는 삭제를 선택하세요</span>
+      <button type="button" onclick="toggleCardManageMode()" style="background:none; border:none; color:#1e40af; font-size:0.72rem; font-weight:700; cursor:pointer;">완료</button>
     </div>
 
     <!-- 스크롤 없는 컴팩트 2열 카드 그리드 -->
@@ -875,8 +992,9 @@
       </div>
 
       <div class="modal-actions">
+        <button type="button" id="btnDeleteCard" class="btn-modal-delete" style="display:none;" onclick="deleteCurrentCard()">삭제</button>
+        <div style="flex:1;"></div>
         <button type="button" class="btn-modal-cancel" onclick="closeCardModal()">취소</button>
-        <button type="button" id="btnDeleteCard" class="btn-modal-cancel" style="display:none; color:var(--danger);" onclick="deleteCurrentCard()">삭제</button>
         <button type="button" class="btn-modal-save" onclick="saveCardInfo()">저장</button>
       </div>
     </div>
@@ -969,18 +1087,6 @@
         </svg>
         <span>웰빙클럽</span>
       </a>
-      <a href="../apt/index.html" class="nav-tab">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path>
-          <path d="M6 12H4a2 2 0 0 0-2 2v8h4"></path>
-          <path d="M18 9h2a2 2 0 0 1 2 2v11h-4"></path>
-          <path d="M10 6h4"></path>
-          <path d="M10 10h4"></path>
-          <path d="M10 14h4"></path>
-          <path d="M10 18h4"></path>
-        </svg>
-        <span>임장노트</span>
-      </a>
       <a href="../car/index.html" class="nav-tab">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 17h14v-5l-2-5H7l-2 5v5z"></path>
@@ -1010,6 +1116,35 @@
     let logs = [];
     let selectedCardId = null;
     let historyFilter = 'all'; // 'all' (전체 카드 통합) | 'selected' (선택 카드)
+    let isCardManageMode = false; // 내 카드 목록 관리(수정/삭제) 모드
+
+    function toggleCardManageMode() {
+      isCardManageMode = !isCardManageMode;
+      const btn = document.getElementById("btnToggleCardManage");
+      const txt = document.getElementById("manageBtnText");
+      const banner = document.getElementById("cardManageBanner");
+      if (btn) btn.classList.toggle("active", isCardManageMode);
+      if (txt) txt.innerText = isCardManageMode ? "완료" : "관리";
+      if (banner) banner.style.display = isCardManageMode ? "flex" : "none";
+      renderUI();
+    }
+
+    function deleteCardDirect(cardId, cardName) {
+      if (cards.length <= 1) {
+        alert("최소 1개 이상의 카드가 등록되어 있어야 합니다.");
+        return;
+      }
+      const targetName = cardName || (cards.find(c => c.id === cardId) || {}).name || "해당";
+      if (!confirm(`'${targetName}' 카드를 내 카드 목록에서 삭제하시겠습니까?`)) {
+        return;
+      }
+      cards = cards.filter(c => c.id !== cardId);
+      if (selectedCardId === cardId) {
+        selectedCardId = cards.length > 0 ? cards[0].id : null;
+      }
+      saveCards(cards);
+      renderUI();
+    }
 
     function setHistoryFilter(mode) {
       historyFilter = mode;
@@ -1242,50 +1377,95 @@
       const plateContainer = document.getElementById("cardListContainer");
       plateContainer.innerHTML = "";
 
-      cards.forEach(card => {
-        const st = cardStats[card.id] || { used: 0, target: card.targetAmount, isZeroTarget: Number(card.targetAmount) === 0, isAchieved: false, remain: card.targetAmount };
-        const isZero = st.isZeroTarget;
-        const pct = isZero ? 100 : Math.min(100, Math.round((st.used / (card.targetAmount || 1)) * 100));
-        const isSelected = card.id === selectedCardId;
-
-        const plate = document.createElement("div");
-        plate.className = `card-mini-plate ${isSelected ? 'active' : ''}`;
-        plate.onclick = () => selectCard(card.id);
-
-        let statusText = '';
-        let subText = '';
-        if (isZero) {
-          statusText = formatWon(st.used);
-          subText = '무실적';
-        } else if (st.isAchieved) {
-          statusText = '달성';
-          subText = '완료';
-        } else {
-          statusText = formatWon(st.used);
-          subText = '남은 ' + formatWon(st.remain);
-        }
-
-        plate.innerHTML = `
-          <div class="mini-top">
-            <div class="mini-title-wrap">
-              <span class="mini-chip chip-${card.color || 'blue'}"></span>
-              <span class="mini-name">${escapeHtml(card.name)}</span>
-            </div>
-            <span class="mini-status ${st.isAchieved ? 'achieved' : ''}">
-              ${statusText}
-            </span>
-          </div>
-          <div class="mini-bar-wrap">
-            <div class="mini-progress-bg">
-              <div class="mini-progress-fill ${st.isAchieved ? 'achieved' : ''}" style="width: ${pct}%;"></div>
-            </div>
-            <span class="mini-sub ${st.isAchieved ? 'achieved' : ''}">
-              ${subText}
-            </span>
+      if (cards.length === 0) {
+        plateContainer.innerHTML = `
+          <div style="grid-column: span 2; text-align: center; padding: 20px 10px; background: var(--card); border: 1.5px dashed var(--border); border-radius: 10px;">
+            <div style="font-size: 0.82rem; color: var(--muted); margin-bottom: 8px;">등록된 카드가 없습니다.</div>
+            <button type="button" class="btn-head-action btn-add-card" style="display:inline-flex;" onclick="openCardModal()">+ 카드 등록하기</button>
           </div>
         `;
-        plateContainer.appendChild(plate);
-      });
+      } else {
+        cards.forEach(card => {
+          const st = cardStats[card.id] || { used: 0, target: card.targetAmount, isZeroTarget: Number(card.targetAmount) === 0, isAchieved: false, remain: card.targetAmount };
+          const isZero = st.isZeroTarget;
+          const pct = isZero ? 100 : Math.min(100, Math.round((st.used / (card.targetAmount || 1)) * 100));
+          const isSelected = card.id === selectedCardId;
+
+          const plate = document.createElement("div");
+          plate.className = `card-mini-plate ${isSelected ? 'active' : ''}`;
+          if (isCardManageMode) {
+            plate.onclick = () => openCardModal(card.id);
+          } else {
+            plate.onclick = () => selectCard(card.id);
+          }
+
+          let statusText = '';
+          let subText = '';
+          if (isZero) {
+            statusText = formatWon(st.used);
+            subText = '무실적';
+          } else if (st.isAchieved) {
+            statusText = '달성';
+            subText = '완료';
+          } else {
+            statusText = formatWon(st.used);
+            subText = '남은 ' + formatWon(st.remain);
+          }
+
+          // 관리 모드일 때 하단 액션 바
+          const manageBarHtml = isCardManageMode ? `
+            <div class="plate-manage-bar" onclick="event.stopPropagation()">
+              <button type="button" class="btn-plate-action" onclick="openCardModal('${card.id}')" title="수정">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                수정
+              </button>
+              <button type="button" class="btn-plate-action btn-plate-del" onclick="deleteCardDirect('${card.id}', '${escapeHtml(card.name)}')" title="삭제">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                삭제
+              </button>
+            </div>
+          ` : '';
+
+          // 일반 모드일 때 카드명 옆 간편 수정 버튼
+          const miniEditBtnHtml = !isCardManageMode ? `
+            <button type="button" class="btn-plate-edit" onclick="event.stopPropagation(); openCardModal('${card.id}')" title="카드 수정">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+          ` : '';
+
+          plate.innerHTML = `
+            <div class="mini-top">
+              <div class="mini-title-wrap">
+                <span class="mini-chip chip-${card.color || 'blue'}"></span>
+                <span class="mini-name">${escapeHtml(card.name)}</span>
+                ${miniEditBtnHtml}
+              </div>
+              <span class="mini-status ${st.isAchieved ? 'achieved' : ''}">
+                ${statusText}
+              </span>
+            </div>
+            <div class="mini-bar-wrap">
+              <div class="mini-progress-bg">
+                <div class="mini-progress-fill ${st.isAchieved ? 'achieved' : ''}" style="width: ${pct}%;"></div>
+              </div>
+              <span class="mini-sub ${st.isAchieved ? 'achieved' : ''}">
+                ${subText}
+              </span>
+            </div>
+            ${manageBarHtml}
+          `;
+          plateContainer.appendChild(plate);
+        });
+      }
 
       // 4. 선택된 카드 이름 라벨
       const curCard = cards.find(c => c.id === selectedCardId) || cards[0];
@@ -1439,15 +1619,17 @@
     function deleteCurrentCard() {
       const cardId = document.getElementById("modalCardId").value;
       if (!cardId) return;
+      const curCard = cards.find(c => c.id === cardId);
+      const cardName = curCard ? curCard.name : "해당";
       if (cards.length <= 1) {
         alert("최소 1개 이상의 카드가 등록되어 있어야 합니다.");
         return;
       }
-      if (!confirm("이 카드를 삭제하시겠습니까? 등록된 내역도 함께 관리되지 않습니다.")) return;
+      if (!confirm(`'${cardName}' 카드를 내 카드 목록에서 삭제하시겠습니까?`)) return;
 
       cards = cards.filter(c => c.id !== cardId);
       if (selectedCardId === cardId) {
-        selectedCardId = cards[0].id;
+        selectedCardId = cards.length > 0 ? cards[0].id : null;
       }
       saveCards(cards);
       closeCardModal();
