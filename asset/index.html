@@ -19,7 +19,10 @@
       --muted: #64748b;
       --border: #e2e8f0;
       --danger: #ef4444;
-      --success: #16a34a;
+      --success: #10b981;
+      --purple: #8b5cf6;
+      --amber: #f59e0b;
+      --sky: #0284c7;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { 
@@ -65,7 +68,7 @@
       background: var(--primary) !important;
     }
 
-    /* 예쁜 삭제 버튼 스타일 */
+    /* 삭제 버튼 스타일 */
     .btn-del-item {
       width: 30px;
       height: 30px;
@@ -109,7 +112,7 @@
     .modal-card {
       background: #ffffff;
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       border-radius: 16px;
       box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
       overflow: hidden;
@@ -156,11 +159,11 @@
     }
     .category-chip-group {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 8px;
     }
     .chip {
-      padding: 8px 4px;
+      padding: 9px 8px;
       border: 1px solid var(--border);
       background: #f8fafc;
       border-radius: 8px;
@@ -181,6 +184,29 @@
       border-color: var(--danger);
       color: var(--danger);
     }
+
+    .sub-chip-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sub-chip {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .sub-chip.active {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+
     .modal-input {
       width: 100%;
       padding: 10px 12px;
@@ -226,54 +252,131 @@
 
     .container { max-width: 600px; margin: 0 auto; padding: 16px; }
 
-    /* 총 순자산 대형 카드 */
+    /* 총 순자산 & 구분별 통계 대형 카드 */
     .net-worth-card {
       background: #0f172a;
       color: #fff;
       border-radius: 16px;
-      padding: 20px;
+      padding: 20px 18px;
       margin-bottom: 18px;
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+    }
+    .net-worth-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 4px;
     }
     .net-worth-label {
       font-size: 0.8rem;
       color: #94a3b8;
       font-weight: 600;
-      margin-bottom: 4px;
     }
     .net-worth-value {
-      font-size: 1.45rem;
+      font-size: 1.55rem;
       font-weight: 800;
       letter-spacing: -0.3px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+      color: #ffffff;
       display: flex;
-      flex-wrap: wrap;
       align-items: baseline;
-      gap: 7px;
+      gap: 6px;
     }
-    .net-pension-amount {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: #93c5fd;
-      letter-spacing: normal;
+    .net-worth-unit {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #94a3b8;
     }
+
+    /* 구분별 3대 통계 그리드 */
+    .stat-section-title {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .category-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .cat-stat-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .cat-stat-head {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .cat-stat-val {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.2px;
+    }
+    .cat-stat-pct {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #38bdf8;
+    }
+    .stat-badge-re { color: #38bdf8; }
+    .stat-badge-fin { color: #818cf8; }
+    .stat-badge-pen { color: #34d399; }
+
+    /* 자산 비중 프로그레스 바 */
+    .dist-bar-wrap {
+      margin-bottom: 14px;
+    }
+    .dist-bar {
+      display: flex;
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #334155;
+      gap: 2px;
+    }
+    .dist-seg {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    .seg-re { background: #38bdf8; }
+    .seg-fin { background: #818cf8; }
+    .seg-pen { background: #34d399; }
+
+    /* 총 자산 / 대출 서브 정보 */
     .net-worth-sub {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      padding-top: 14px;
+      padding-top: 12px;
       border-top: 1px solid #1e293b;
     }
     .sub-stat-label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #94a3b8;
       margin-bottom: 2px;
     }
     .sub-stat-val {
-      font-size: 1rem;
+      font-size: 0.96rem;
       font-weight: 700;
     }
-    .val-asset { color: #38bdf8; }
+    .val-asset { color: #e2e8f0; }
     .val-debt { color: #f87171; }
 
     /* 자산 카테고리 카드 */
@@ -283,6 +386,7 @@
       border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
     .category-header {
       display: flex;
@@ -314,23 +418,56 @@
       color: var(--danger);
     }
 
+    /* 서브 그룹 헤더 (금융자산의 예적금/주식/코인, 연금자산의 개인/퇴직/국민) */
+    .subgroup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 10px;
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 8px;
+      margin-top: 12px;
+      margin-bottom: 8px;
+    }
+    .subgroup-header:first-of-type {
+      margin-top: 0;
+    }
+    .subgroup-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .subgroup-sum {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+
     /* 자산 항목 리스트 */
     .asset-item-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
     .asset-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
+      padding: 2px 0;
     }
     .asset-name {
       font-size: 0.88rem;
       font-weight: 600;
       color: var(--text);
       flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .asset-input-wrap {
       width: 145px;
@@ -377,27 +514,38 @@
     .history-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
     .history-item {
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 10px;
+      border: 1px solid #edf2f7;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .history-item-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 12px;
-      background: #f8fafc;
-      border-radius: 8px;
-      font-size: 0.85rem;
     }
-    .history-date { color: var(--muted); font-weight: 600; }
-    .history-net { font-weight: 700; color: var(--text); }
-    .btn-hist-del {
-      background: none;
-      border: none;
-      color: #94a3b8;
-      cursor: pointer;
-      padding: 2px 6px;
+    .history-date { color: var(--muted); font-weight: 600; font-size: 0.82rem; }
+    .history-net { font-weight: 800; color: var(--text); font-size: 0.95rem; }
+    .history-detail-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      font-size: 0.72rem;
+      color: #64748b;
     }
-    .btn-hist-del:hover { color: var(--danger); }
+    .hist-chip {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
 
     /* 하단 글로벌 탭 네비게이터 */
     .bottom-nav {
@@ -469,18 +617,22 @@
       </div>
       
       <div class="modal-body">
-        <label class="form-label">자산 분류 선택</label>
+        <label class="form-label">자산 대분류 구분</label>
         <div class="category-chip-group">
-          <button type="button" class="chip active" data-cat="deposit" onclick="selectModalCategory('deposit')">예금</button>
-          <button type="button" class="chip" data-cat="savings" onclick="selectModalCategory('savings')">적금</button>
-          <button type="button" class="chip" data-cat="stock" onclick="selectModalCategory('stock')">주식</button>
-          <button type="button" class="chip" data-cat="crypto" onclick="selectModalCategory('crypto')">가상자산</button>
-          <button type="button" class="chip" data-cat="realEstate" onclick="selectModalCategory('realEstate')">부동산</button>
-          <button type="button" class="chip chip-debt" data-cat="debt" onclick="selectModalCategory('debt')">대출(부채)</button>
+          <button type="button" class="chip active" data-cat="realEstate" onclick="selectModalCategory('realEstate')">🏠 부동산 자산</button>
+          <button type="button" class="chip" data-cat="financial" onclick="selectModalCategory('financial')">📈 금융 자산</button>
+          <button type="button" class="chip" data-cat="pension" onclick="selectModalCategory('pension')">🛡️ 연금 자산</button>
+          <button type="button" class="chip chip-debt" data-cat="debt" onclick="selectModalCategory('debt')">🔻 대출(부채)</button>
+        </div>
+
+        <!-- 세부 하위 분류 선택 -->
+        <div id="subCategorySection" style="display: none;">
+          <label class="form-label">세부 구분</label>
+          <div class="sub-chip-group" id="subCategoryChipGroup"></div>
         </div>
 
         <label class="form-label" for="modalItemName">항목 / 계좌명</label>
-        <input type="text" id="modalItemName" class="modal-input" placeholder="예: 국민은행 정기예금, 토스증권 등" />
+        <input type="text" id="modalItemName" class="modal-input" placeholder="예: 우리은행 정기예금, 토스증권, 국민연금 등" />
 
         <label class="form-label" for="modalItemVal">초기 금액 (원)</label>
         <input type="text" id="modalItemVal" inputmode="numeric" class="modal-input" placeholder="0" oninput="formatModalInput(this)" onkeydown="if(event.key==='Enter') submitAddAsset()" />
@@ -494,101 +646,70 @@
   </div>
 
   <div class="container">
-    <!-- 총 순자산 대형 카드 -->
+    <!-- 총 순자산 & 3대 구분 통계 대형 카드 -->
     <div class="net-worth-card">
-      <div class="net-worth-label">내 순자산 (총자산 - 대출)</div>
-      <div class="net-worth-value" id="netWorthDisplay">
-        <span>0</span>
-        <span class="net-pension-amount">(연금자산 0)</span>
+      <div class="net-worth-top">
+        <div class="net-worth-label">내 순자산 (총자산 - 대출)</div>
       </div>
+      <div class="net-worth-value">
+        <span id="netWorthDisplay">0</span>
+        <span class="net-worth-unit">원</span>
+      </div>
+
+      <!-- 구분별 실제 통계 요약 (부동산 / 금융 / 연금) -->
+      <div class="stat-section-title">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>구분별 자산 통계 및 구성비</span>
+      </div>
+      <div class="category-stats-grid">
+        <div class="cat-stat-box">
+          <div class="cat-stat-head stat-badge-re">🏠 부동산 자산</div>
+          <div class="cat-stat-val" id="statRealEstateVal">0 원</div>
+          <div class="cat-stat-pct" id="statRealEstatePct">0.0%</div>
+        </div>
+        <div class="cat-stat-box">
+          <div class="cat-stat-head stat-badge-fin">📈 금융 자산</div>
+          <div class="cat-stat-val" id="statFinancialVal">0 원</div>
+          <div class="cat-stat-pct" id="statFinancialPct">0.0%</div>
+        </div>
+        <div class="cat-stat-box">
+          <div class="cat-stat-head stat-badge-pen">🛡️ 연금 자산</div>
+          <div class="cat-stat-val" id="statPensionVal">0 원</div>
+          <div class="cat-stat-pct" id="statPensionPct">0.0%</div>
+        </div>
+      </div>
+
+      <!-- 자산 구성 비율 게이지 바 -->
+      <div class="dist-bar-wrap">
+        <div class="dist-bar">
+          <div class="dist-seg seg-re" id="distBarRe" style="width: 0%;"></div>
+          <div class="dist-seg seg-fin" id="distBarFin" style="width: 0%;"></div>
+          <div class="dist-seg seg-pen" id="distBarPen" style="width: 0%;"></div>
+        </div>
+      </div>
+
       <div class="net-worth-sub">
         <div>
-          <div class="sub-stat-label">총 자산</div>
+          <div class="sub-stat-label">총 자산 합계</div>
           <div class="sub-stat-val val-asset" id="totalAssetDisplay">0 원</div>
         </div>
         <div>
-          <div class="sub-stat-label">총 대출(부채)</div>
+          <div class="sub-stat-label">총 대출 · 부채 (차감)</div>
           <div class="sub-stat-val val-debt" id="totalDebtDisplay">0 원</div>
         </div>
       </div>
     </div>
 
-    <!-- 1. 예금 -->
+    <!-- 1. 부동산 자산 -->
     <div class="category-card">
       <div class="category-header">
         <div class="category-title-wrap">
-          <div class="category-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
-          </div>
-          <span>예금</span>
-        </div>
-        <div class="category-sum" id="sumDeposit">0 원</div>
-      </div>
-      <div class="asset-item-list" id="listDeposit"></div>
-    </div>
-
-    <!-- 2. 적금 -->
-    <div class="category-card">
-      <div class="category-header">
-        <div class="category-title-wrap">
-          <div class="category-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 14 14"></polyline>
-            </svg>
-          </div>
-          <span>적금</span>
-        </div>
-        <div class="category-sum" id="sumSavings">0 원</div>
-      </div>
-      <div class="asset-item-list" id="listSavings"></div>
-    </div>
-
-    <!-- 3. 주식 (개인연금, 회사지원 연금, DC, IRP, ISA) -->
-    <div class="category-card">
-      <div class="category-header">
-        <div class="category-title-wrap">
-          <div class="category-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
-              <polyline points="17 6 23 6 23 12"></polyline>
-            </svg>
-          </div>
-          <span>주식 (연금 / ISA)</span>
-        </div>
-        <div class="category-sum" id="sumStock">0 원</div>
-      </div>
-      <div class="asset-item-list" id="listStock"></div>
-    </div>
-
-    <!-- 4. 가상자산 (업비트 계좌) -->
-    <div class="category-card">
-      <div class="category-header">
-        <div class="category-title-wrap">
-          <div class="category-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5 1.5 0 2.5 1 2.5 2.5s-1 2.5-2.5 2.5h-2.5"></path>
-              <line x1="9.5" y1="12" x2="14.5" y2="12"></line>
-              <line x1="9.5" y1="15.5" x2="13" y2="15.5"></line>
-            </svg>
-          </div>
-          <span>가상자산</span>
-        </div>
-        <div class="category-sum" id="sumCrypto">0 원</div>
-      </div>
-      <div class="asset-item-list" id="listCrypto"></div>
-    </div>
-
-    <!-- 5. 부동산 -->
-    <div class="category-card">
-      <div class="category-header">
-        <div class="category-title-wrap">
-          <div class="category-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="category-icon" style="color:#0284c7;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 21h18"></path>
               <path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path>
               <line x1="9" y1="7" x2="9.01" y2="7"></line>
@@ -597,19 +718,104 @@
               <line x1="15" y1="11" x2="15.01" y2="11"></line>
             </svg>
           </div>
-          <span>부동산</span>
+          <span>부동산 자산</span>
         </div>
         <div class="category-sum" id="sumRealEstate">0 원</div>
       </div>
       <div class="asset-item-list" id="listRealEstate"></div>
     </div>
 
-    <!-- 6. 대출 / 부채 (차감) -->
+    <!-- 2. 금융 자산 (예/적금 + 주식 + 코인) -->
     <div class="category-card">
       <div class="category-header">
         <div class="category-title-wrap">
-          <div class="category-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <div class="category-icon" style="color:#2563eb;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+          </div>
+          <span>금융 자산 <span style="font-size:0.75rem; color:var(--muted); font-weight:500;">(예/적금 · 주식 · 코인)</span></span>
+        </div>
+        <div class="category-sum" id="sumFinancial">0 원</div>
+      </div>
+
+      <!-- 소분류 1: 예 / 적금 -->
+      <div class="subgroup-header">
+        <div class="subgroup-title">
+          <span>💳 예 · 적금</span>
+        </div>
+        <div class="subgroup-sum" id="subsumFinancialDeposit">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listFinancialDeposit"></div>
+
+      <!-- 소분류 2: 주식 -->
+      <div class="subgroup-header">
+        <div class="subgroup-title">
+          <span>📈 주식 (국내/해외 · ISA)</span>
+        </div>
+        <div class="subgroup-sum" id="subsumFinancialStock">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listFinancialStock"></div>
+
+      <!-- 소분류 3: 코인 / 가상자산 -->
+      <div class="subgroup-header">
+        <div class="subgroup-title">
+          <span>🪙 가상자산 (코인)</span>
+        </div>
+        <div class="subgroup-sum" id="subsumFinancialCrypto">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listFinancialCrypto"></div>
+    </div>
+
+    <!-- 3. 연금 자산 (개인연금 + 퇴직연금 + 국민연금) -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon" style="color:#10b981;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <span>연금 자산 <span style="font-size:0.75rem; color:var(--muted); font-weight:500;">(개인 · 퇴직 · 국민연금)</span></span>
+        </div>
+        <div class="category-sum" id="sumPension">0 원</div>
+      </div>
+
+      <!-- 소분류 1: 개인연금 -->
+      <div class="subgroup-header">
+        <div class="subgroup-title">
+          <span>🌱 개인연금 (연금저축 · 회사지원)</span>
+        </div>
+        <div class="subgroup-sum" id="subsumPensionPersonal">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listPensionPersonal"></div>
+
+      <!-- 소분류 2: 퇴직연금 -->
+      <div class="subgroup-header">
+        <div class="subgroup-title">
+          <span>🏢 퇴직연금 (DC · IRP)</span>
+        </div>
+        <div class="subgroup-sum" id="subsumPensionRetirement">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listPensionRetirement"></div>
+
+      <!-- 소분류 3: 국민연금 -->
+      <div class="subgroup-header">
+        <div class="subgroup-title">
+          <span>🇰🇷 국민연금 (예상/누적)</span>
+        </div>
+        <div class="subgroup-sum" id="subsumPensionNational">0 원</div>
+      </div>
+      <div class="asset-item-list" id="listPensionNational"></div>
+    </div>
+
+    <!-- 4. 대출 / 부채 (차감) -->
+    <div class="category-card">
+      <div class="category-header">
+        <div class="category-title-wrap">
+          <div class="category-icon" style="color:#ef4444;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <line x1="8" y1="12" x2="16" y2="12"></line>
             </svg>
@@ -686,58 +892,133 @@
     const STORAGE_KEY_ASSETS = "hub_custom_assets_v2";
     const STORAGE_KEY_SNAPSHOTS = "hub_custom_snapshots_v2";
 
-    // 사용자 요청 분류 기준: 예금 / 적금 / 주식 / 가상자산 / 부동산 + 대출
+    // 3대 구분 기준 기본 설정
+    // 1. 부동산 자산 (realEstate)
+    // 2. 금융 자산 (financial - deposit_savings, stock, crypto)
+    // 3. 연금 자산 (pension - personal, retirement, national)
+    // 4. 대출 / 부채 (debt)
     const DEFAULT_CONFIG = {
-      deposit: [
-        { id: "dep_woori", name: "우리은행 계좌", value: 0 },
-        { id: "dep_1", name: "주거래 입출금", value: 0 },
-        { id: "dep_2", name: "비상금 CMA/MMF", value: 0 }
-      ],
-      savings: [
-        { id: "sav_1", name: "정기 적금", value: 0 },
-        { id: "sav_2", name: "주택 청약", value: 0 }
-      ],
-      stock: [
-        { id: "stk_1", name: "개인연금", value: 0 },
-        { id: "stk_2", name: "회사지원 연금", value: 0 },
-        { id: "stk_3", name: "퇴직연금 DC", value: 0 },
-        { id: "stk_4", name: "퇴직연금 IRP", value: 0 },
-        { id: "stk_5", name: "ISA 계좌", value: 0 }
-      ],
-      crypto: [
-        { id: "cry_1", name: "업비트 계좌", value: 0 }
-      ],
       realEstate: [
-        { id: "re_1", name: "거주 부동산 (아파트)", value: 0 },
-        { id: "re_2", name: "기타 부동산 / 보증금", value: 0 }
+        { id: "re_1", name: "거주 부동산 (아파트)", value: 0, subCategory: "realEstate" },
+        { id: "re_2", name: "기타 부동산 / 보증금", value: 0, subCategory: "realEstate" }
+      ],
+      financial: [
+        { id: "fin_woori", name: "우리은행 계좌", value: 0, subCategory: "deposit_savings" },
+        { id: "fin_1", name: "주거래 입출금", value: 0, subCategory: "deposit_savings" },
+        { id: "fin_2", name: "비상금 CMA/MMF", value: 0, subCategory: "deposit_savings" },
+        { id: "fin_3", name: "정기 적금 / 청약", value: 0, subCategory: "deposit_savings" },
+        { id: "fin_stk_1", name: "국내/해외 주식", value: 0, subCategory: "stock" },
+        { id: "fin_stk_2", name: "ISA 계좌", value: 0, subCategory: "stock" },
+        { id: "fin_cry_1", name: "업비트 (가상자산)", value: 0, subCategory: "crypto" }
+      ],
+      pension: [
+        { id: "pen_pers_1", name: "개인연금 (연금저축)", value: 0, subCategory: "personal" },
+        { id: "pen_pers_2", name: "회사지원 연금", value: 0, subCategory: "personal" },
+        { id: "pen_ret_1", name: "퇴직연금 DC", value: 0, subCategory: "retirement" },
+        { id: "pen_ret_2", name: "퇴직연금 IRP", value: 0, subCategory: "retirement" },
+        { id: "pen_nat_1", name: "국민연금", value: 103000000, subCategory: "national", monthsPaid: 271, monthlyAmount: 1750000 }
       ],
       debt: [
-        { id: "deb_1", name: "주택담보대출", value: 0 },
-        { id: "deb_2", name: "신용대출 / 기타", value: 0 }
+        { id: "deb_1", name: "주택담보대출", value: 0, subCategory: "debt" },
+        { id: "deb_2", name: "신용대출 / 기타", value: 0, subCategory: "debt" }
       ]
     };
 
     let assetData = {};
 
+    function migrateOldData(oldData) {
+      const newData = {
+        realEstate: Array.isArray(oldData.realEstate) ? [...oldData.realEstate] : JSON.parse(JSON.stringify(DEFAULT_CONFIG.realEstate)),
+        financial: [],
+        pension: [],
+        debt: Array.isArray(oldData.debt) ? [...oldData.debt] : JSON.parse(JSON.stringify(DEFAULT_CONFIG.debt))
+      };
+
+      // 예금 & 적금 -> 금융 자산 (deposit_savings)
+      (oldData.deposit || []).forEach(item => {
+        newData.financial.push({ ...item, subCategory: "deposit_savings" });
+      });
+      (oldData.savings || []).forEach(item => {
+        newData.financial.push({ ...item, subCategory: "deposit_savings" });
+      });
+
+      // 가상자산 -> 금융 자산 (crypto)
+      (oldData.crypto || []).forEach(item => {
+        newData.financial.push({ ...item, subCategory: "crypto" });
+      });
+
+      // 기존 stock 분석: 연금 관련 항목은 연금 자산으로, 그 외(ISA 등)는 금융 자산(stock)으로 분류
+      (oldData.stock || []).forEach(item => {
+        const nm = (item.name || "").toLowerCase();
+        if (nm.includes("국민연금")) {
+          newData.pension.push({ ...item, subCategory: "national" });
+        } else if (nm.includes("퇴직") || nm.includes("dc") || nm.includes("irp")) {
+          newData.pension.push({ ...item, subCategory: "retirement" });
+        } else if (nm.includes("개인연금") || nm.includes("연금")) {
+          newData.pension.push({ ...item, subCategory: "personal" });
+        } else {
+          newData.financial.push({ ...item, subCategory: "stock" });
+        }
+      });
+
+      // 기본 항목 보완
+      if (!newData.pension.some(item => (item.name || "").includes("국민연금"))) {
+        newData.pension.push({ id: "pen_nat_1", name: "국민연금 (예상/누적)", value: 0, subCategory: "national" });
+      }
+
+      newData.realEstate.forEach(item => { if (!item.subCategory) item.subCategory = "realEstate"; });
+      newData.debt.forEach(item => { if (!item.subCategory) item.subCategory = "debt"; });
+
+      return newData;
+    }
+
     function loadData() {
       const raw = localStorage.getItem(STORAGE_KEY_ASSETS);
       if (raw) {
         try {
-          assetData = JSON.parse(raw);
+          const parsed = JSON.parse(raw);
+          // 구버전 데이터(deposit/stock 키가 있고 financial이 없는 경우) 마이그레이션 실행
+          if ((parsed.deposit || parsed.stock) && !parsed.financial) {
+            assetData = migrateOldData(parsed);
+            saveData();
+          } else {
+            assetData = parsed;
+          }
         } catch (e) {
           assetData = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
         }
       } else {
         assetData = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
       }
-      
-      ["deposit", "savings", "stock", "crypto", "realEstate", "debt"].forEach(cat => {
-        if (!assetData[cat]) assetData[cat] = DEFAULT_CONFIG[cat];
+
+      // 키 보정
+      ["realEstate", "financial", "pension", "debt"].forEach(k => {
+        if (!Array.isArray(assetData[k])) assetData[k] = JSON.parse(JSON.stringify(DEFAULT_CONFIG[k]));
       });
 
-      // 우리은행 계좌 보정 (기존 저장 데이터에 없을 경우 자동 추가)
-      if (!assetData.deposit.some(x => x.name.includes("우리은행"))) {
-        assetData.deposit.unshift({ id: "dep_woori", name: "우리은행 계좌", value: 0 });
+      // 우리은행 계좌 보정
+      if (!assetData.financial.some(x => (x.name || "").includes("우리은행"))) {
+        assetData.financial.unshift({ id: "fin_woori", name: "우리은행 계좌", value: 0, subCategory: "deposit_savings" });
+      }
+
+      // 국민연금 가입정보 및 금액 반영 (271개월, 1억 3백만 원, 월 175만 원)
+      let natItem = assetData.pension.find(x => x.subCategory === "national" || (x.name || "").includes("국민연금"));
+      if (natItem) {
+        if (!natItem.value || natItem.value === 0) {
+          natItem.value = 103000000;
+        }
+        natItem.name = "국민연금";
+        natItem.monthsPaid = 271;
+        natItem.monthlyAmount = 1750000;
+      } else {
+        assetData.pension.push({
+          id: "pen_nat_1",
+          name: "국민연금",
+          value: 103000000,
+          subCategory: "national",
+          monthsPaid: 271,
+          monthlyAmount: 1750000
+        });
       }
     }
 
@@ -770,59 +1051,127 @@
       return Number.isFinite(num) ? num : 0;
     }
 
-    function renderCategory(catKey, containerId) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-      assetData[catKey].forEach(item => {
-        const row = document.createElement("div");
-        row.className = "asset-row";
-        
-        const displayVal = item.value ? item.value.toLocaleString("ko-KR") : "";
-        row.innerHTML = `
-          <span class="asset-name">${escapeHtml(item.name)}</span>
-          <div style="display:flex; align-items:center; gap:4px;">
-            <div class="asset-input-wrap">
-              <input type="text" inputmode="numeric" class="asset-input" placeholder="0" 
-                value="${displayVal}"
-                onfocus="this.select()"
-                oninput="onAssetInput(this, '${catKey}', '${item.id}')"
-                onblur="onAssetBlur(this, '${catKey}', '${item.id}')"
-                onkeydown="if(event.key==='Enter') this.blur()" />
-            </div>
-            <button type="button" class="btn-del-item" onclick="deleteItem('${catKey}', '${item.id}')" title="삭제" aria-label="삭제">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-            </button>
+    function renderItemRow(item, catKey) {
+      const row = document.createElement("div");
+      row.className = "asset-row";
+      const displayVal = item.value ? item.value.toLocaleString("ko-KR") : "";
+
+      let badgeHtml = "";
+      if (item.subCategory === "national" || (item.name && item.name.includes("국민연금"))) {
+        const months = item.monthsPaid || 271;
+        const monthly = item.monthlyAmount || 1750000;
+        const monthlyWon = Math.round(monthly / 10000);
+        badgeHtml = `
+          <div style="display:flex; align-items:center; gap:5px; margin-top:3px; flex-wrap:wrap; cursor:pointer;" onclick="editPensionDetail('${item.id}')" title="클릭하여 가입월수 및 예상수령액 수정">
+            <span style="font-size:0.68rem; background:#eff6ff; color:#2563eb; padding:2px 6px; border-radius:4px; font-weight:600;">📅 ${months}개월 가입</span>
+            <span style="font-size:0.68rem; background:#ecfdf5; color:#059669; padding:2px 6px; border-radius:4px; font-weight:600;">💵 만 65세부터 매월 ${monthlyWon}만 원 예상(세후)</span>
+            <span style="font-size:0.65rem; color:#94a3b8; text-decoration:underline;">수정</span>
           </div>
         `;
-        container.appendChild(row);
-      });
+      }
+
+      row.innerHTML = `
+        <div style="flex: 1; min-width: 0;">
+          <span class="asset-name" title="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span>
+          ${badgeHtml}
+        </div>
+        <div style="display:flex; align-items:center; gap:4px;">
+          <div class="asset-input-wrap">
+            <input type="text" inputmode="numeric" class="asset-input" placeholder="0" 
+              value="${displayVal}"
+              onfocus="this.select()"
+              oninput="onAssetInput(this, '${catKey}', '${item.id}')"
+              onblur="onAssetBlur(this, '${catKey}', '${item.id}')"
+              onkeydown="if(event.key==='Enter') this.blur()" />
+          </div>
+          <button type="button" class="btn-del-item" onclick="deleteItem('${catKey}', '${item.id}')" title="삭제" aria-label="삭제">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+        </div>
+      `;
+      return row;
     }
 
-    const CONTAINER_MAP = {
-      deposit: "listDeposit",
-      savings: "listSavings",
-      stock: "listStock",
-      crypto: "listCrypto",
-      realEstate: "listRealEstate",
-      debt: "listDebt"
-    };
+    function renderAllLists() {
+      // 1. 부동산
+      const reContainer = document.getElementById("listRealEstate");
+      reContainer.innerHTML = "";
+      assetData.realEstate.forEach(item => reContainer.appendChild(renderItemRow(item, "realEstate")));
 
-    let selectedModalCat = "deposit";
+      // 2. 금융 자산 (소분류별 분기 렌더링)
+      const finDepContainer = document.getElementById("listFinancialDeposit");
+      const finStkContainer = document.getElementById("listFinancialStock");
+      const finCryContainer = document.getElementById("listFinancialCrypto");
+      finDepContainer.innerHTML = "";
+      finStkContainer.innerHTML = "";
+      finCryContainer.innerHTML = "";
 
-    function openAddAssetModal(defaultCat = "deposit") {
-      selectedModalCat = defaultCat;
-      document.querySelectorAll(".chip").forEach(chip => {
-        if (chip.getAttribute("data-cat") === defaultCat) {
-          chip.classList.add("active");
+      assetData.financial.forEach(item => {
+        const sub = item.subCategory || "deposit_savings";
+        if (sub === "stock") {
+          finStkContainer.appendChild(renderItemRow(item, "financial"));
+        } else if (sub === "crypto") {
+          finCryContainer.appendChild(renderItemRow(item, "financial"));
         } else {
-          chip.classList.remove("active");
+          finDepContainer.appendChild(renderItemRow(item, "financial"));
         }
       });
+
+      // 3. 연금 자산 (소분류별 분기 렌더링)
+      const penPersContainer = document.getElementById("listPensionPersonal");
+      const penRetContainer = document.getElementById("listPensionRetirement");
+      const penNatContainer = document.getElementById("listPensionNational");
+      penPersContainer.innerHTML = "";
+      penRetContainer.innerHTML = "";
+      penNatContainer.innerHTML = "";
+
+      assetData.pension.forEach(item => {
+        const sub = item.subCategory || "personal";
+        if (sub === "retirement") {
+          penRetContainer.appendChild(renderItemRow(item, "pension"));
+        } else if (sub === "national") {
+          penNatContainer.appendChild(renderItemRow(item, "pension"));
+        } else {
+          penPersContainer.appendChild(renderItemRow(item, "pension"));
+        }
+      });
+
+      // 4. 대출 / 부채
+      const debtContainer = document.getElementById("listDebt");
+      debtContainer.innerHTML = "";
+      assetData.debt.forEach(item => debtContainer.appendChild(renderItemRow(item, "debt")));
+    }
+
+    // 모달 관리
+    let selectedMainCat = "realEstate";
+    let selectedSubCat = "realEstate";
+
+    const SUB_CATEGORY_MAP = {
+      realEstate: [
+        { id: "realEstate", label: "부동산" }
+      ],
+      financial: [
+        { id: "deposit_savings", label: "예 · 적금" },
+        { id: "stock", label: "주식" },
+        { id: "crypto", label: "가상자산(코인)" }
+      ],
+      pension: [
+        { id: "personal", label: "개인연금" },
+        { id: "retirement", label: "퇴직연금" },
+        { id: "national", label: "국민연금" }
+      ],
+      debt: [
+        { id: "debt", label: "대출 · 부채" }
+      ]
+    };
+
+    function openAddAssetModal(defaultCat = "realEstate") {
+      selectModalCategory(defaultCat);
       document.getElementById("modalItemName").value = "";
       document.getElementById("modalItemVal").value = "";
       
@@ -839,10 +1188,35 @@
     }
 
     function selectModalCategory(catKey) {
-      selectedModalCat = catKey;
-      document.querySelectorAll(".chip").forEach(chip => {
+      selectedMainCat = catKey;
+      document.querySelectorAll(".category-chip-group .chip").forEach(chip => {
         chip.classList.toggle("active", chip.getAttribute("data-cat") === catKey);
       });
+
+      const subSection = document.getElementById("subCategorySection");
+      const subChipGroup = document.getElementById("subCategoryChipGroup");
+      const subList = SUB_CATEGORY_MAP[catKey] || [];
+
+      if (subList.length > 1) {
+        subSection.style.display = "block";
+        subChipGroup.innerHTML = "";
+        selectedSubCat = subList[0].id;
+        subList.forEach(sub => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `sub-chip ${sub.id === selectedSubCat ? "active" : ""}`;
+          btn.innerText = sub.label;
+          btn.onclick = () => {
+            selectedSubCat = sub.id;
+            subChipGroup.querySelectorAll(".sub-chip").forEach(c => c.classList.remove("active"));
+            btn.classList.add("active");
+          };
+          subChipGroup.appendChild(btn);
+        });
+      } else {
+        subSection.style.display = "none";
+        selectedSubCat = subList.length > 0 ? subList[0].id : catKey;
+      }
     }
 
     function formatModalInput(input) {
@@ -868,18 +1242,19 @@
 
       const numVal = parseInputVal(valInput.value);
 
-      if (!assetData[selectedModalCat]) {
-        assetData[selectedModalCat] = [];
+      if (!assetData[selectedMainCat]) {
+        assetData[selectedMainCat] = [];
       }
 
-      assetData[selectedModalCat].push({
+      assetData[selectedMainCat].push({
         id: "item_" + Date.now(),
         name: name,
-        value: numVal
+        value: numVal,
+        subCategory: selectedSubCat
       });
 
       saveData();
-      renderCategory(selectedModalCat, CONTAINER_MAP[selectedModalCat]);
+      renderAllLists();
       closeAddAssetModal();
     }
 
@@ -890,15 +1265,12 @@
 
       assetData[catKey] = assetData[catKey].filter(x => x.id !== itemId);
       saveData();
-      renderCategory(catKey, CONTAINER_MAP[catKey]);
+      renderAllLists();
     }
 
-    // 숫자 입력 시 실시간 천단위 콤마 포맷팅 & 실시간 합산
     function onAssetInput(input, catKey, itemId) {
       const originalValue = input.value;
       const cursorPosition = input.selectionStart || 0;
-
-      // 숫자 이외의 문자 제거
       const onlyNums = originalValue.replace(/[^0-9]/g, "");
 
       if (!onlyNums) {
@@ -907,12 +1279,10 @@
         return;
       }
 
-      // 맨 앞의 불필요한 연속 0 제거
       const cleanedNumStr = onlyNums.replace(/^0+(?!$)/, "");
       const numVal = parseInt(cleanedNumStr, 10) || 0;
       const formatted = numVal.toLocaleString("ko-KR");
 
-      // 입력 전후 길이 차이로 커서 위치 보정
       const lengthDiff = formatted.length - originalValue.length;
       input.value = formatted;
 
@@ -920,9 +1290,7 @@
       if (newCursor < 0) newCursor = 0;
       if (newCursor > formatted.length) newCursor = formatted.length;
       
-      try {
-        input.setSelectionRange(newCursor, newCursor);
-      } catch (e) {}
+      try { input.setSelectionRange(newCursor, newCursor); } catch (e) {}
 
       updateAssetItem(catKey, itemId, numVal);
     }
@@ -936,7 +1304,6 @@
     }
 
     function onAssetBlur(input, catKey, itemId) {
-      // 한글 단위(억, 만 등) 입력 대응 및 최종 저장
       const val = parseInputVal(input.value);
       const target = assetData[catKey].find(x => x.id === itemId);
       if (target) {
@@ -946,53 +1313,83 @@
       }
     }
 
+    // 통계 및 금액 재계산
     function recalculate() {
-      let sumDeposit = 0;
-      let sumSavings = 0;
-      let sumStock = 0;
-      let sumCrypto = 0;
+      // 1. 부동산 자산 합계
       let sumRealEstate = 0;
-      let sumDebt = 0;
+      (assetData.realEstate || []).forEach(x => sumRealEstate += (x.value || 0));
 
-      assetData.deposit.forEach(x => sumDeposit += (x.value || 0));
-      assetData.savings.forEach(x => sumSavings += (x.value || 0));
-      assetData.stock.forEach(x => sumStock += (x.value || 0));
-      assetData.crypto.forEach(x => sumCrypto += (x.value || 0));
-      assetData.realEstate.forEach(x => sumRealEstate += (x.value || 0));
-      assetData.debt.forEach(x => sumDebt += (x.value || 0));
-
-      const totalAsset = sumDeposit + sumSavings + sumStock + sumCrypto + sumRealEstate;
-      const netWorth = totalAsset - sumDebt;
-
-      // 노후 대비 연금자산 별도 합산 (개인연금, 회사지원 연금, 퇴직연금 DC, 퇴직연금 IRP 등)
-      let sumPension = 0;
-      Object.keys(assetData).forEach(cat => {
-        if (cat === "debt") return;
-        (assetData[cat] || []).forEach(item => {
-          const nm = (item.name || "").toLowerCase();
-          if (nm.includes("연금") || nm.includes("irp") || nm.includes("dc") || nm.includes("퇴직")) {
-            sumPension += (item.value || 0);
-          }
-        });
+      // 2. 금융 자산 합계 및 소분류별 합계
+      let sumFinancial = 0;
+      let subsumFinDep = 0;
+      let subsumFinStk = 0;
+      let subsumFinCry = 0;
+      (assetData.financial || []).forEach(x => {
+        const val = x.value || 0;
+        sumFinancial += val;
+        const sub = x.subCategory || "deposit_savings";
+        if (sub === "stock") subsumFinStk += val;
+        else if (sub === "crypto") subsumFinCry += val;
+        else subsumFinDep += val;
       });
 
-      document.getElementById("sumDeposit").innerText = formatNumberWon(sumDeposit);
-      document.getElementById("sumSavings").innerText = formatNumberWon(sumSavings);
-      document.getElementById("sumStock").innerText = formatNumberWon(sumStock);
-      document.getElementById("sumCrypto").innerText = formatNumberWon(sumCrypto);
-      document.getElementById("sumRealEstate").innerText = formatNumberWon(sumRealEstate);
-      document.getElementById("sumDebt").innerText = formatNumberWon(sumDebt);
+      // 3. 연금 자산 합계 및 소분류별 합계
+      let sumPension = 0;
+      let subsumPenPers = 0;
+      let subsumPenRet = 0;
+      let subsumPenNat = 0;
+      (assetData.pension || []).forEach(x => {
+        const val = x.value || 0;
+        sumPension += val;
+        const sub = x.subCategory || "personal";
+        if (sub === "retirement") subsumPenRet += val;
+        else if (sub === "national") subsumPenNat += val;
+        else subsumPenPers += val;
+      });
 
+      // 4. 대출 합계
+      let sumDebt = 0;
+      (assetData.debt || []).forEach(x => sumDebt += (x.value || 0));
+
+      // 총 자산 및 순자산
+      const totalAsset = sumRealEstate + sumFinancial + sumPension;
+      const netWorth = totalAsset - sumDebt;
+
+      // 비율 계산 (총 자산 대비)
+      const pctRe = totalAsset > 0 ? ((sumRealEstate / totalAsset) * 100).toFixed(1) : "0.0";
+      const pctFin = totalAsset > 0 ? ((sumFinancial / totalAsset) * 100).toFixed(1) : "0.0";
+      const pctPen = totalAsset > 0 ? ((sumPension / totalAsset) * 100).toFixed(1) : "0.0";
+
+      // 1) 상단 통계 영역 갱신
+      document.getElementById("netWorthDisplay").innerText = Math.round(netWorth).toLocaleString("ko-KR");
       document.getElementById("totalAssetDisplay").innerText = formatNumberWon(totalAsset);
       document.getElementById("totalDebtDisplay").innerText = formatNumberWon(sumDebt);
 
-      const netWorthFormatted = Math.round(netWorth).toLocaleString("ko-KR");
-      const pensionFormatted = Math.round(sumPension).toLocaleString("ko-KR");
+      document.getElementById("statRealEstateVal").innerText = formatNumberWon(sumRealEstate);
+      document.getElementById("statRealEstatePct").innerText = `${pctRe}%`;
+      document.getElementById("statFinancialVal").innerText = formatNumberWon(sumFinancial);
+      document.getElementById("statFinancialPct").innerText = `${pctFin}%`;
+      document.getElementById("statPensionVal").innerText = formatNumberWon(sumPension);
+      document.getElementById("statPensionPct").innerText = `${pctPen}%`;
 
-      document.getElementById("netWorthDisplay").innerHTML = `
-        <span>${netWorthFormatted}</span>
-        <span class="net-pension-amount">(연금자산 ${pensionFormatted})</span>
-      `;
+      document.getElementById("distBarRe").style.width = `${pctRe}%`;
+      document.getElementById("distBarFin").style.width = `${pctFin}%`;
+      document.getElementById("distBarPen").style.width = `${pctPen}%`;
+
+      // 2) 카테고리 헤더 합계 갱신
+      document.getElementById("sumRealEstate").innerText = formatNumberWon(sumRealEstate);
+      document.getElementById("sumFinancial").innerText = formatNumberWon(sumFinancial);
+      document.getElementById("sumPension").innerText = formatNumberWon(sumPension);
+      document.getElementById("sumDebt").innerText = formatNumberWon(sumDebt);
+
+      // 3) 소분류 소계 갱신
+      document.getElementById("subsumFinancialDeposit").innerText = formatNumberWon(subsumFinDep);
+      document.getElementById("subsumFinancialStock").innerText = formatNumberWon(subsumFinStk);
+      document.getElementById("subsumFinancialCrypto").innerText = formatNumberWon(subsumFinCry);
+
+      document.getElementById("subsumPensionPersonal").innerText = formatNumberWon(subsumPenPers);
+      document.getElementById("subsumPensionRetirement").innerText = formatNumberWon(subsumPenRet);
+      document.getElementById("subsumPensionNational").innerText = formatNumberWon(subsumPenNat);
     }
 
     // 스냅샷 기능
@@ -1005,15 +1402,13 @@
     }
 
     function saveSnapshot() {
-      let sumDeposit = 0, sumSavings = 0, sumStock = 0, sumCrypto = 0, sumRealEstate = 0, sumDebt = 0;
-      assetData.deposit.forEach(x => sumDeposit += (x.value || 0));
-      assetData.savings.forEach(x => sumSavings += (x.value || 0));
-      assetData.stock.forEach(x => sumStock += (x.value || 0));
-      assetData.crypto.forEach(x => sumCrypto += (x.value || 0));
-      assetData.realEstate.forEach(x => sumRealEstate += (x.value || 0));
-      assetData.debt.forEach(x => sumDebt += (x.value || 0));
+      let sumRealEstate = 0, sumFinancial = 0, sumPension = 0, sumDebt = 0;
+      (assetData.realEstate || []).forEach(x => sumRealEstate += (x.value || 0));
+      (assetData.financial || []).forEach(x => sumFinancial += (x.value || 0));
+      (assetData.pension || []).forEach(x => sumPension += (x.value || 0));
+      (assetData.debt || []).forEach(x => sumDebt += (x.value || 0));
 
-      const totalAsset = sumDeposit + sumSavings + sumStock + sumCrypto + sumRealEstate;
+      const totalAsset = sumRealEstate + sumFinancial + sumPension;
       const netWorth = totalAsset - sumDebt;
 
       const now = new Date();
@@ -1026,7 +1421,10 @@
         date: dateStr,
         totalAsset,
         totalDebt: sumDebt,
-        netWorth
+        netWorth,
+        realEstate: sumRealEstate,
+        financial: sumFinancial,
+        pension: sumPension
       };
 
       if (existingIdx >= 0) {
@@ -1044,7 +1442,7 @@
       const snapshots = getSnapshots();
       const container = document.getElementById("historyListContainer");
       if (snapshots.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding: 12px; color: var(--muted); font-size: 0.82rem;">상단의 [자산 스냅샷 저장]을 누르면 일자별 자산 변화가 기록됩니다.</div>';
+        container.innerHTML = '<div style="text-align:center; padding: 12px; color: var(--muted); font-size: 0.82rem;">상단의 [스냅샷] 버튼을 누르면 일자별 자산 변화가 기록됩니다.</div>';
         return;
       }
 
@@ -1064,20 +1462,38 @@
           }
         }
 
+        const reText = snap.realEstate !== undefined ? `부동산 ${formatNumberWon(snap.realEstate)}` : "";
+        const finText = snap.financial !== undefined ? `금융 ${formatNumberWon(snap.financial)}` : "";
+        const penText = snap.pension !== undefined ? `연금 ${formatNumberWon(snap.pension)}` : "";
+
+        let chipsHtml = "";
+        if (reText || finText || penText) {
+          chipsHtml = `
+            <div class="history-detail-chips">
+              ${reText ? `<span class="hist-chip">${reText}</span>` : ""}
+              ${finText ? `<span class="hist-chip">${finText}</span>` : ""}
+              ${penText ? `<span class="hist-chip">${penText}</span>` : ""}
+            </div>
+          `;
+        }
+
         item.innerHTML = `
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="history-date">${snap.date}</span>
-            ${diffHtml}
+          <div class="history-item-top">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="history-date">${snap.date}</span>
+              ${diffHtml}
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="history-net">${formatNumberWon(snap.netWorth)}</span>
+              <button type="button" class="btn-del-item" style="width:26px; height:26px;" onclick="deleteSnapshot(${snap.id})" title="기록 삭제" aria-label="기록 삭제">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            </div>
           </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="history-net">${formatNumberWon(snap.netWorth)}</span>
-            <button type="button" class="btn-del-item" style="width:26px; height:26px;" onclick="deleteSnapshot(${snap.id})" title="기록 삭제" aria-label="기록 삭제">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-            </button>
-          </div>
+          ${chipsHtml}
         `;
         container.appendChild(item);
       });
@@ -1099,12 +1515,7 @@
 
     window.addEventListener("DOMContentLoaded", () => {
       loadData();
-      renderCategory("deposit", "listDeposit");
-      renderCategory("savings", "listSavings");
-      renderCategory("stock", "listStock");
-      renderCategory("crypto", "listCrypto");
-      renderCategory("realEstate", "listRealEstate");
-      renderCategory("debt", "listDebt");
+      renderAllLists();
       recalculate();
       renderSnapshots();
     });

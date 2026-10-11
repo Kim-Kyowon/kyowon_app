@@ -174,6 +174,44 @@
       flex-shrink: 0;
     }
 
+    /* 자산 요약 전용 박스 스타일 */
+    .asset-summary-box {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .asset-summary-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #edf2f7;
+    }
+    .asset-net-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .asset-net-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.2px;
+    }
+    .asset-categories-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
     .val-blue { color: #2563eb; }
     .val-red { color: #e11d48; }
     .val-green { color: #059669; }
@@ -361,7 +399,7 @@
             </div>
             <div class="service-info">
               <div class="service-name">자산현황</div>
-              <div class="service-desc">예금·적금·주식·가상자산·부동산 순자산 관리</div>
+              <div class="service-desc">부동산·금융(예적금/주식/코인)·연금 자산 현황 관리</div>
             </div>
           </div>
           <div class="service-arrow">
@@ -370,21 +408,30 @@
             </svg>
           </div>
         </div>
-        <!-- 자산현황 실시간 개요 -->
-        <div class="service-summary-box">
-          <div class="summary-col">
-            <span class="summary-col-label">순자산</span>
-            <span class="summary-col-value val-blue" id="summaryNetWorth">-</span>
+        <!-- 자산현황 실시간 개요 (부동산 / 금융 / 연금 3대 분류) -->
+        <div class="asset-summary-box">
+          <div class="asset-summary-top">
+            <span class="asset-net-label">
+              <span>내 순자산</span>
+              <span id="summaryDebtWrap" style="font-size:0.68rem; color:#ef4444; font-weight:600;"></span>
+            </span>
+            <span class="asset-net-val" id="summaryNetWorth">-</span>
           </div>
-          <div class="summary-divider"></div>
-          <div class="summary-col">
-            <span class="summary-col-label">연금자산</span>
-            <span class="summary-col-value val-green" id="summaryPensionAsset">-</span>
-          </div>
-          <div class="summary-divider"></div>
-          <div class="summary-col">
-            <span class="summary-col-label">총 부채</span>
-            <span class="summary-col-value val-red" id="summaryTotalDebt">-</span>
+          <div class="asset-categories-row">
+            <div class="summary-col">
+              <span class="summary-col-label">🏠 부동산</span>
+              <span class="summary-col-value" id="summaryRealEstateVal" style="color: #0284c7;">-</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-col">
+              <span class="summary-col-label">📈 금융</span>
+              <span class="summary-col-value" id="summaryFinancialVal" style="color: #4f46e5;">-</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-col">
+              <span class="summary-col-label">🛡️ 연금</span>
+              <span class="summary-col-value" id="summaryPensionAsset" style="color: #059669;">-</span>
+            </div>
           </div>
         </div>
       </a>
@@ -626,29 +673,38 @@
 
     // 서비스별 실시간 개요 데이터 업데이트
     function updateHubSummaries() {
-      // 1. 자산현황 (순자산, 연금자산, 총 부채)
+      // 1. 자산현황 (순자산, 부동산 자산, 금융 자산, 연금 자산, 부채)
       try {
         const rawAsset = localStorage.getItem("hub_custom_assets_v2");
         let totalAsset = 0;
         let totalDebt = 0;
+        let sumRealEstate = 0;
+        let sumFinancial = 0;
         let sumPension = 0;
 
         if (rawAsset) {
           const assetData = JSON.parse(rawAsset);
-          ["deposit", "savings", "stock", "crypto", "realEstate"].forEach(cat => {
-            if (Array.isArray(assetData[cat])) {
-              assetData[cat].forEach(item => {
-                const val = Number(item.value) || 0;
-                totalAsset += val;
-
-                // 연금자산 집계 (개인연금, 회사지원 연금, 퇴직연금 DC/IRP 등)
-                const nm = (item.name || "").toLowerCase();
-                if (nm.includes("연금") || nm.includes("irp") || nm.includes("dc") || nm.includes("퇴직")) {
-                  sumPension += val;
-                }
-              });
-            }
-          });
+          if (assetData.financial || assetData.pension || assetData.realEstate) {
+            (assetData.realEstate || []).forEach(item => sumRealEstate += (Number(item.value) || 0));
+            (assetData.financial || []).forEach(item => sumFinancial += (Number(item.value) || 0));
+            (assetData.pension || []).forEach(item => sumPension += (Number(item.value) || 0));
+            totalAsset = sumRealEstate + sumFinancial + sumPension;
+          } else {
+            (assetData.realEstate || []).forEach(item => sumRealEstate += (Number(item.value) || 0));
+            (assetData.deposit || []).forEach(item => sumFinancial += (Number(item.value) || 0));
+            (assetData.savings || []).forEach(item => sumFinancial += (Number(item.value) || 0));
+            (assetData.crypto || []).forEach(item => sumFinancial += (Number(item.value) || 0));
+            (assetData.stock || []).forEach(item => {
+              const val = Number(item.value) || 0;
+              const nm = (item.name || "").toLowerCase();
+              if (nm.includes("연금") || nm.includes("irp") || nm.includes("dc") || nm.includes("퇴직")) {
+                sumPension += val;
+              } else {
+                sumFinancial += val;
+              }
+            });
+            totalAsset = sumRealEstate + sumFinancial + sumPension;
+          }
           if (Array.isArray(assetData.debt)) {
             assetData.debt.forEach(item => {
               totalDebt += (Number(item.value) || 0);
@@ -658,11 +714,18 @@
         const netWorth = totalAsset - totalDebt;
 
         const elNet = document.getElementById("summaryNetWorth");
+        const elRealEstate = document.getElementById("summaryRealEstateVal");
+        const elFinancial = document.getElementById("summaryFinancialVal");
         const elPension = document.getElementById("summaryPensionAsset");
-        const elDebt = document.getElementById("summaryTotalDebt");
+        const elDebtWrap = document.getElementById("summaryDebtWrap");
+
         if (elNet) elNet.innerText = formatKoreanMoney(netWorth);
+        if (elRealEstate) elRealEstate.innerText = formatKoreanMoney(sumRealEstate);
+        if (elFinancial) elFinancial.innerText = formatKoreanMoney(sumFinancial);
         if (elPension) elPension.innerText = formatKoreanMoney(sumPension);
-        if (elDebt) elDebt.innerText = formatKoreanMoney(totalDebt);
+        if (elDebtWrap) {
+          elDebtWrap.innerText = totalDebt > 0 ? `(대출 -${formatKoreanMoney(totalDebt)})` : "";
+        }
       } catch (e) {
         console.error("자산현황 요약 로드 오류:", e);
       }
