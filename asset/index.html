@@ -1062,10 +1062,13 @@
         const monthly = item.monthlyAmount || 1750000;
         const monthlyWon = Math.round(monthly / 10000);
         badgeHtml = `
-          <div style="display:flex; align-items:center; gap:5px; margin-top:3px; flex-wrap:wrap; cursor:pointer;" onclick="editPensionDetail('${item.id}')" title="클릭하여 가입월수 및 예상수령액 수정">
-            <span style="font-size:0.68rem; background:#eff6ff; color:#2563eb; padding:2px 6px; border-radius:4px; font-weight:600;">📅 ${months}개월 가입</span>
-            <span style="font-size:0.68rem; background:#ecfdf5; color:#059669; padding:2px 6px; border-radius:4px; font-weight:600;">💵 만 65세부터 매월 ${monthlyWon}만 원 예상(세후)</span>
-            <span style="font-size:0.65rem; color:#94a3b8; text-decoration:underline;">수정</span>
+          <div style="display:flex; align-items:center; gap:5px; margin-top:3px; flex-wrap:wrap;">
+            <button type="button" onclick="editPensionDetail('${item.id}')" style="background:#eff6ff; color:#2563eb; border:1px solid #bfdbfe; padding:2px 7px; border-radius:5px; font-size:0.68rem; font-weight:600; cursor:pointer;" title="가입월수 및 수령액 수정">
+              ${months}개월 가입 ✏️
+            </button>
+            <button type="button" onclick="editPensionDetail('${item.id}')" style="background:#ecfdf5; color:#059669; border:1px solid #a7f3d0; padding:2px 7px; border-radius:5px; font-size:0.68rem; font-weight:600; cursor:pointer;" title="가입월수 및 수령액 수정">
+              만 65세/매월 ${monthlyWon}만원
+            </button>
           </div>
         `;
       }
@@ -1264,6 +1267,28 @@
       if (!confirm(`[${item.name}] 항목을 삭제하시겠습니까?`)) return;
 
       assetData[catKey] = assetData[catKey].filter(x => x.id !== itemId);
+      saveData();
+      renderAllLists();
+    }
+
+    // 국민연금 가입 개월 수 및 예상 수령액 수정 함수
+    function editPensionDetail(itemId) {
+      const item = (assetData.pension || []).find(x => x.id === itemId);
+      if (!item) return;
+      const curMonths = item.monthsPaid || 271;
+      const curMonthly = item.monthlyAmount ? Math.round(item.monthlyAmount / 10000) : 175;
+
+      const newMonthsStr = prompt("국민연금 가입 개월 수를 입력하세요 (숫자만 입력):", curMonths);
+      if (newMonthsStr === null) return;
+      const newMonths = parseInt(newMonthsStr.replace(/[^0-9]/g, ""), 10);
+
+      const newMonthlyStr = prompt("만 65세부터 예상 월 수령액을 입력하세요 (만 원 단위, 숫자만 입력):\n예: 175", curMonthly);
+      if (newMonthlyStr === null) return;
+      const newMonthly = parseInt(newMonthlyStr.replace(/[^0-9]/g, ""), 10) * 10000;
+
+      if (!isNaN(newMonths) && newMonths > 0) item.monthsPaid = newMonths;
+      if (!isNaN(newMonthly) && newMonthly > 0) item.monthlyAmount = newMonthly;
+
       saveData();
       renderAllLists();
     }
