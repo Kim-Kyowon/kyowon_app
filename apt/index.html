@@ -491,29 +491,48 @@
       cursor: pointer;
     }
 
-    /* 플로팅 비교 바 (2개 이상 선택 시 노출) */
+    /* 플로팅 비교 바 (2개 이상 선택 시에만 노출, 평소 완전 숨김) */
     .floating-compare-bar {
       position: fixed;
-      bottom: calc(68px + env(safe-area-inset-bottom, 0px));
-      left: 16px;
-      right: 16px;
-      max-width: 568px;
+      bottom: calc(70px + env(safe-area-inset-bottom, 0px));
+      left: 14px;
+      right: 14px;
+      max-width: 572px;
       margin: 0 auto;
       background: #0f172a;
       color: #ffffff;
       border-radius: 14px;
       padding: 10px 14px;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-      z-index: 90;
-      transform: translateY(160%);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+      z-index: 70;
+      animation: floatSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .floating-compare-bar.show {
-      transform: translateY(0);
+      display: flex !important;
     }
+    @keyframes floatSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* 상단 인라인 비교 버튼 */
+    .btn-top-compare {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-top-compare:active { background: var(--primary-dark); }
     .compare-info {
       display: flex;
       align-items: center;
@@ -916,6 +935,9 @@
         <button type="button" class="select-all-btn" id="toggleSelectAllBtn" onclick="toggleSelectAll()">
           <span id="selectAllText">전체 선택</span>
         </button>
+        <button type="button" class="btn-top-compare" id="btnTopCompare" onclick="openComparisonModal()">
+          ⚖️ 비교분석 (<span id="topCompareCount">0</span>)
+        </button>
         <div style="display:flex; align-items:center; gap:6px;">
           <span style="font-size:0.75rem; color:var(--muted);">정렬:</span>
           <select id="sortSelect" class="select-sort" onchange="onSearchOrFilterChange()">
@@ -943,14 +965,12 @@
       <span class="compare-count-badge" id="selectedCountBadge">0</span>
       <span>개 단지 선택됨</span>
     </div>
-    <button type="button" class="btn-do-compare" onclick="openComparisonModal()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 20V10"></path>
-        <path d="M12 20V4"></path>
-        <path d="M6 20v-6"></path>
-      </svg>
-      비교 분석하기
-    </button>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <button type="button" class="btn-do-compare" onclick="openComparisonModal()">
+        비교 분석하기 ⚖️
+      </button>
+      <button type="button" onclick="clearSelection()" title="선택 닫기" style="background:none; border:none; color:#94a3b8; font-size:1.1rem; cursor:pointer; padding:2px 6px;">✕</button>
+    </div>
   </div>
 
   <!-- 단지 등록/수정 모달 -->
@@ -1570,18 +1590,30 @@
       renderNotes();
     }
 
-    // 플로팅 비교 바 업데이트
+    // 플로팅 비교 바 및 상단 비교 버튼 업데이트
     function updateFloatingCompareBar() {
       const bar = document.getElementById("floatingCompareBar");
       const badge = document.getElementById("selectedCountBadge");
+      const topBtn = document.getElementById("btnTopCompare");
+      const topCount = document.getElementById("topCompareCount");
       const count = selectedNoteIds.size;
-      badge.innerText = count;
+
+      if (badge) badge.innerText = count;
+      if (topCount) topCount.innerText = count;
 
       if (count >= 2) {
-        bar.classList.add("show");
+        if (bar) bar.classList.add("show");
+        if (topBtn) topBtn.style.display = "inline-flex";
       } else {
-        bar.classList.remove("show");
+        if (bar) bar.classList.remove("show");
+        if (topBtn) topBtn.style.display = "none";
       }
+    }
+
+    // 선택 전체 해제
+    function clearSelection() {
+      selectedNoteIds.clear();
+      renderNotes();
     }
 
     // 검색/정렬 변경 핸들러
