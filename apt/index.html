@@ -1,0 +1,1934 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>아파트 임장노트</title>
+  
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #10b981;
+      --badge-bg: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); 
+      min-height: 100vh; 
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* 헤더 */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      z-index: 30;
+    }
+    .header-content {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      text-decoration: none;
+      padding: 4px;
+      margin-left: -4px;
+      border-radius: 8px;
+    }
+    .btn-back:active { background: #f1f5f9; }
+    .header-title { 
+      font-size: 1.05rem; 
+      font-weight: 700; 
+      color: var(--text); 
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-add-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 7px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-add-primary:active { background: var(--primary-dark); }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* 상단 요약 카드 (Hero Summary) */
+    .hero-summary-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .hero-label {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .hero-tag {
+      background: rgba(37, 99, 235, 0.25);
+      color: #93c5fd;
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .hero-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      text-align: center;
+      padding-top: 4px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .hero-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .hero-stat-label {
+      font-size: 0.68rem;
+      color: #94a3b8;
+    }
+    .hero-stat-val {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 필터 & 검색 & 정렬 바 */
+    .control-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      padding: 9px 12px 9px 34px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 0.84rem;
+      background: #f8fafc;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+    .filter-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+    }
+    .select-sort {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      background: #ffffff;
+      color: var(--text);
+      outline: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .select-all-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .select-all-btn:active { background: #f1f5f9; }
+
+    /* 단지 카드 목록 */
+    .note-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .note-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+    .note-card.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+      background: #fafcff;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+    }
+    .compare-checkbox {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .card-title-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-loc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 평점 배지 */
+    .score-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #fef3c7;
+      color: #b45309;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* 핵심 가격 및 임장일 박스 */
+    .price-box {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .price-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .price-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .price-val {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.2px;
+    }
+    .visit-date-badge {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600;
+      background: #ffffff;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* 기본 스펙 태그 행 (연식, 세대수, 주차대수, 평형) */
+    .spec-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .spec-tag {
+      background: var(--badge-bg);
+      color: #334155;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .spec-tag-highlight {
+      background: #eff6ff;
+      color: var(--primary);
+    }
+    .spec-tag-parking {
+      background: #f0fdf4;
+      color: #15803d;
+      font-weight: 700;
+    }
+
+    /* 3대 입지 평점 바 (교통, 학군, 상권) */
+    .ratings-preview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 6px 8px;
+      background: #ffffff;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      font-size: 0.72rem;
+    }
+    .rating-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
+    .rating-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+    .rating-stars {
+      color: #f59e0b;
+      font-weight: 700;
+    }
+
+    /* 한줄 메모 / 총평 */
+    .card-memo {
+      font-size: 0.78rem;
+      color: #334155;
+      line-height: 1.4;
+      background: #fafafa;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 카드 하단 액션 버튼들 */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid #f1f5f9;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .card-date {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-card-action {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      color: #475569;
+      cursor: pointer;
+    }
+    .btn-card-action:active { background: #f1f5f9; }
+    .btn-card-del { color: var(--danger); border-color: #fee2e2; }
+    .btn-card-del:active { background: #fef2f2; }
+
+    /* 빈 목록 안내 */
+    .empty-state {
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      padding: 40px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .empty-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .empty-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .empty-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+      max-width: 300px;
+    }
+    .btn-sample {
+      margin-top: 6px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* 플로팅 비교 바 (2개 이상 선택 시 노출) */
+    .floating-compare-bar {
+      position: fixed;
+      bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+      left: 16px;
+      right: 16px;
+      max-width: 568px;
+      margin: 0 auto;
+      background: #0f172a;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      z-index: 90;
+      transform: translateY(160%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .floating-compare-bar.show {
+      transform: translateY(0);
+    }
+    .compare-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .compare-count-badge {
+      background: var(--primary);
+      color: #ffffff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .btn-do-compare {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-do-compare:active { background: var(--primary-dark); }
+
+    /* 모달 공통 스타일 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal-sheet {
+      background: #ffffff;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      animation: slideUp 0.22s ease-out;
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .btn-modal-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+    }
+    .modal-body {
+      padding: 16px 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 폼 섹션 및 인풋 */
+    .form-group-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .input-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .field-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .field-label {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #475569;
+    }
+    .field-label span.req { color: var(--danger); }
+    .form-input {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: 0.84rem;
+      color: var(--text);
+      background: #f8fafc;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+    .input-hint {
+      font-size: 0.7rem;
+      color: var(--primary);
+      font-weight: 600;
+      min-height: 16px;
+    }
+
+    /* 입지 평점 선택기 */
+    .rating-picker-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+    }
+    .rating-picker-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .rating-sub {
+      font-size: 0.68rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .star-buttons {
+      display: flex;
+      gap: 3px;
+    }
+    .star-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .star-btn.active {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #b45309;
+    }
+
+    .textarea-input {
+      min-height: 60px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    .modal-footer {
+      padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      background: #ffffff;
+    }
+    .btn-modal-cancel {
+      flex: 1;
+      padding: 11px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .btn-modal-submit {
+      flex: 2;
+      padding: 11px;
+      border: none;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .btn-modal-submit:active { background: var(--primary-dark); }
+
+    /* =====================================
+       비교 분석 전용 모달 (Comparison View)
+       ===================================== */
+    .compare-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .compare-scroll-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 440px;
+      font-size: 0.78rem;
+    }
+    .compare-table th, .compare-table td {
+      border: 1px solid var(--border);
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .compare-table th {
+      background: #f8fafc;
+      color: #475569;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    .compare-table .col-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      background: #f1f5f9;
+      min-width: 125px;
+    }
+    .compare-table .row-category {
+      background: #f8fafc;
+      font-weight: 700;
+      text-align: left;
+      padding-left: 10px;
+      color: var(--primary);
+    }
+    .highlight-best {
+      background: #ecfdf5 !important;
+      color: #047857 !important;
+      font-weight: 700;
+    }
+    .best-badge {
+      display: inline-block;
+      font-size: 0.65rem;
+      background: #10b981;
+      color: #ffffff;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-left: 4px;
+    }
+
+    /* 하단 글로벌 탭 네비게이터 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      z-index: 80;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .bottom-nav-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      height: 56px;
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.65rem;
+      font-weight: 600;
+      transition: color 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      padding: 2px 0;
+    }
+    .nav-tab:active { background: #f8fafc; }
+    .nav-tab.active { color: var(--primary); }
+    .nav-tab svg { width: 19px; height: 19px; }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header>
+    <div class="header-content">
+      <div class="header-left">
+        <a href="../index.html" class="btn-back" title="홈으로 이동">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </a>
+        <h1 class="header-title">아파트 임장노트</h1>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="btn-add-primary" onclick="openCreateModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          단지 등록
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <!-- 상단 대시보드 요약 (Hero Summary) -->
+    <div class="hero-summary-card">
+      <div class="hero-top">
+        <div class="hero-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          임장 아파트 핵심 현황
+        </div>
+        <span class="hero-tag" id="heroLatestDate">최근 임장: -</span>
+      </div>
+      <div class="hero-stats-grid">
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">등록 단지</span>
+          <span class="hero-stat-val" id="heroTotalCount">0곳</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">평균 매매가</span>
+          <span class="hero-stat-val" id="heroAvgPrice">-</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">평균 평점</span>
+          <span class="hero-stat-val" id="heroAvgScore" style="color:#fbbf24;">-</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">평균 주차</span>
+          <span class="hero-stat-val" id="heroAvgParking" style="color:#34d399;">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 검색 & 필터 & 정렬 컨트롤 -->
+    <div class="control-card">
+      <div class="search-box">
+        <div class="search-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
+        <input type="text" id="searchInput" class="search-input" placeholder="단지명, 지역(구/동) 검색..." oninput="onSearchOrFilterChange()" />
+      </div>
+      <div class="filter-row">
+        <button type="button" class="select-all-btn" id="toggleSelectAllBtn" onclick="toggleSelectAll()">
+          <span id="selectAllText">전체 선택</span>
+        </button>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="font-size:0.75rem; color:var(--muted);">정렬:</span>
+          <select id="sortSelect" class="select-sort" onchange="onSearchOrFilterChange()">
+            <option value="latest">최신 임장일순</option>
+            <option value="score_desc">종합 평점 높은순</option>
+            <option value="price_asc">매매가 낮은순</option>
+            <option value="price_desc">매매가 높은순</option>
+            <option value="household_desc">세대수 많은순</option>
+            <option value="parking_desc">주차대수 많은순</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단지 카드 리스트 -->
+    <div class="note-list" id="noteListContainer">
+      <!-- 자바스크립트로 동적 렌더링 -->
+    </div>
+
+  </div>
+
+  <!-- 플로팅 비교 분석 바 -->
+  <div class="floating-compare-bar" id="floatingCompareBar">
+    <div class="compare-info">
+      <span class="compare-count-badge" id="selectedCountBadge">0</span>
+      <span>개 단지 선택됨</span>
+    </div>
+    <button type="button" class="btn-do-compare" onclick="openComparisonModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 20V10"></path>
+        <path d="M12 20V4"></path>
+        <path d="M6 20v-6"></path>
+      </svg>
+      비교 분석하기
+    </button>
+  </div>
+
+  <!-- 단지 등록/수정 모달 -->
+  <div class="modal-overlay" id="formModalOverlay" onclick="handleOverlayClick(event, 'formModalOverlay')">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h2 class="modal-title" id="formModalTitle">아파트 임장 등록</h2>
+        <button type="button" class="btn-modal-close" onclick="closeFormModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editItemIndex" value="-1" />
+
+        <!-- 1. 기본 단지 스펙 -->
+        <div class="form-group-section">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            </svg>
+            단지 기본 정보
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">단지명 <span class="req">*</span></label>
+            <input type="text" id="fComplexName" class="form-input" placeholder="예: 반포자이, 마포래미안푸르지오" required />
+          </div>
+          <div class="input-grid-2">
+            <div class="field-wrap">
+              <label class="field-label">지역/위치</label>
+              <input type="text" id="fLocation" class="form-input" placeholder="예: 서울 마포구 아현동" />
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">임장 일자</label>
+              <input type="date" id="fVisitDate" class="form-input" />
+            </div>
+          </div>
+          <div class="input-grid-2">
+            <div class="field-wrap">
+              <label class="field-label">준공년도 (연식)</label>
+              <input type="number" id="fBuildYear" class="form-input" placeholder="예: 2014" oninput="updateCalculatedSpans()" />
+              <div class="input-hint" id="hintBuildYear"></div>
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">총 세대수</label>
+              <input type="number" id="fHouseholdCount" class="form-input" placeholder="예: 3885 (세대)" />
+            </div>
+          </div>
+          <div class="input-grid-2">
+            <div class="field-wrap">
+              <label class="field-label">세대당 주차대수 <span class="req">*</span></label>
+              <input type="number" step="0.01" id="fParkingRatio" class="form-input" placeholder="예: 1.45 (대/세대)" />
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">대상 평형 / 면적</label>
+              <input type="text" id="fAreaInfo" class="form-input" value="34평 (전용 84㎡)" placeholder="예: 34평 (전용 84㎡)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 시세 및 가격 범위 -->
+        <div class="form-group-section">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            매매 호가 범위 (단위: 만원)
+          </div>
+          <div class="input-grid-2">
+            <div class="field-wrap">
+              <label class="field-label">최소 호가 (시작)</label>
+              <input type="number" id="fPriceMin" class="form-input" placeholder="예: 70000 (7억)" oninput="updateCalculatedSpans()" />
+            </div>
+            <div class="field-wrap">
+              <label class="field-label">최대 호가 (끝)</label>
+              <input type="number" id="fPriceMax" class="form-input" placeholder="예: 80000 (8억)" oninput="updateCalculatedSpans()" />
+            </div>
+          </div>
+          <div class="input-hint" id="hintPriceRange" style="font-size:0.78rem; font-weight:700;"></div>
+        </div>
+
+        <!-- 3. 핵심 3대 입지 평점 -->
+        <div class="form-group-section">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            핵심 3대 입지 평가 (1~5점)
+          </div>
+          
+          <!-- 교통 -->
+          <div class="rating-picker-row">
+            <div class="rating-picker-label">
+              <span>🚇 교통 (역세권·도심 접근성)</span>
+              <span class="rating-sub">지하철 도보시간, 주요 업무지구 이동</span>
+            </div>
+            <div class="star-buttons" id="starsTraffic">
+              <button type="button" class="star-btn" onclick="setRating('traffic', 1)">1</button>
+              <button type="button" class="star-btn" onclick="setRating('traffic', 2)">2</button>
+              <button type="button" class="star-btn" onclick="setRating('traffic', 3)">3</button>
+              <button type="button" class="star-btn" onclick="setRating('traffic', 4)">4</button>
+              <button type="button" class="star-btn" onclick="setRating('traffic', 5)">5</button>
+            </div>
+          </div>
+
+          <!-- 학군 -->
+          <div class="rating-picker-row">
+            <div class="rating-picker-label">
+              <span>🏫 학군 (초품아·학원가)</span>
+              <span class="rating-sub">초등학교 도보 통학, 중고교 학군, 학원가</span>
+            </div>
+            <div class="star-buttons" id="starsSchool">
+              <button type="button" class="star-btn" onclick="setRating('school', 1)">1</button>
+              <button type="button" class="star-btn" onclick="setRating('school', 2)">2</button>
+              <button type="button" class="star-btn" onclick="setRating('school', 3)">3</button>
+              <button type="button" class="star-btn" onclick="setRating('school', 4)">4</button>
+              <button type="button" class="star-btn" onclick="setRating('school', 5)">5</button>
+            </div>
+          </div>
+
+          <!-- 상권 -->
+          <div class="rating-picker-row">
+            <div class="rating-picker-label">
+              <span>🛒 상권/인프라 (생활 편의)</span>
+              <span class="rating-sub">대형마트, 백화점, 병원, 슬세권 상권</span>
+            </div>
+            <div class="star-buttons" id="starsInfra">
+              <button type="button" class="star-btn" onclick="setRating('infra', 1)">1</button>
+              <button type="button" class="star-btn" onclick="setRating('infra', 2)">2</button>
+              <button type="button" class="star-btn" onclick="setRating('infra', 3)">3</button>
+              <button type="button" class="star-btn" onclick="setRating('infra', 4)">4</button>
+              <button type="button" class="star-btn" onclick="setRating('infra', 5)">5</button>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; padding: 6px 4px;">
+            <span style="font-size:0.75rem; color:var(--muted); font-weight:600;">종합 입지 평점:</span>
+            <span style="font-size:0.95rem; font-weight:800; color:#b45309;" id="spanTotalScorePreview">⭐ 3.0 / 5.0</span>
+          </div>
+        </div>
+
+        <!-- 4. 현장 메모 & 총평 -->
+        <div class="form-group-section">
+          <div class="section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            현장 체감 & 총평
+          </div>
+          <div class="field-wrap">
+            <label class="field-label" style="color:var(--success);">👍 현장 장점 (Pros)</label>
+            <textarea id="fPros" class="form-input textarea-input" placeholder="예: 평지 단지, 동간거리 넓음, 조용하고 쾌적한 커뮤니티"></textarea>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label" style="color:var(--danger);">👎 현장 단점 (Cons)</label>
+            <textarea id="fCons" class="form-input textarea-input" placeholder="예: 역에서 약간 오르막, 출근 시간대 엘리베이터 혼잡"></textarea>
+          </div>
+          <div class="field-wrap">
+            <label class="field-label">📝 한줄 총평 및 실거주 메모</label>
+            <textarea id="fSummary" class="form-input textarea-input" placeholder="예: 실거주 만족도가 매우 높고 학군·주차 여건이 우수함"></textarea>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-cancel" onclick="closeFormModal()">취소</button>
+        <button type="button" class="btn-modal-submit" onclick="saveFormItem()">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 비교 분석 모달 (Comparison Modal) -->
+  <div class="modal-overlay" id="compareModalOverlay" onclick="handleOverlayClick(event, 'compareModalOverlay')">
+    <div class="modal-sheet" style="max-height: 94vh;">
+      <div class="modal-header">
+        <h2 class="modal-title">단지 비교 분석 (⚖️)</h2>
+        <button type="button" class="btn-modal-close" onclick="closeCompareModal()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 12px;">
+        <div class="compare-container">
+          <div style="font-size:0.75rem; color:var(--muted); padding: 0 4px;">
+            * 각 항목별 가장 우수한 수치는 <span class="highlight-best" style="padding:2px 6px; border-radius:4px;">녹색 강조</span>로 표시됩니다.
+          </div>
+          <div class="compare-scroll-wrap" id="compareTableContainer">
+            <!-- 자바스크립트로 비교 테이블 렌더링 -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-submit" style="flex:1;" onclick="closeCompareModal()">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 글로벌 탭 네비게이터 -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <a href="../index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>홈</span>
+      </a>
+      <a href="../asset/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        <span>자산</span>
+      </a>
+      <a href="../card/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+          <line x1="1" y1="10" x2="23" y2="10"></line>
+        </svg>
+        <span>카드</span>
+      </a>
+      <a href="../wellbeing/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 5v14"></path>
+          <path d="M18 5v14"></path>
+          <rect x="2" y="7" width="4" height="10" rx="1"></rect>
+          <rect x="18" y="7" width="4" height="10" rx="1"></rect>
+          <line x1="6" y1="12" x2="18" y2="12"></line>
+        </svg>
+        <span>웰빙</span>
+      </a>
+      <a href="../car/index.html" class="nav-tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 17h14v-5l-2-5H7l-2 5v5z"></path>
+          <circle cx="7.5" cy="17.5" r="2.5"></circle>
+          <circle cx="16.5" cy="17.5" r="2.5"></circle>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>차량</span>
+      </a>
+      <a href="./index.html" class="nav-tab active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>임장</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    // LocalStorage 키 정의
+    const STORAGE_KEY = "hub_imjang_notes_v1";
+
+    // 상태 관리
+    let imjangNotes = [];
+    let selectedNoteIds = new Set();
+    let currentRatings = { traffic: 3, school: 3, infra: 3 };
+
+    // 한글 금액 변환 함수 (단위: 만원 기준 입력값 -> 억/만 원 한글 변환)
+    function formatManwonToKorean(manwonVal) {
+      if (!manwonVal || isNaN(manwonVal) || Number(manwonVal) === 0) return "0원";
+      const val = Math.round(Number(manwonVal));
+      const absVal = Math.abs(val);
+      const sign = val < 0 ? "-" : "";
+
+      if (absVal >= 10000) {
+        const eok = Math.floor(absVal / 10000);
+        const man = absVal % 10000;
+        if (man > 0) {
+          return `${sign}${eok}억 ${man.toLocaleString("ko-KR")}만원`;
+        }
+        return `${sign}${eok}억원`;
+      }
+      return `${sign}${absVal.toLocaleString("ko-KR")}만원`;
+    }
+
+    // 매매 호가 범위 포맷 함수 (예: "7억 ~ 8억원", "7억원", "시세 미입력")
+    function formatPriceRange(item) {
+      if (!item) return "시세 미입력";
+      const min = Number(item.priceMin || item.priceBuy) || 0;
+      const max = Number(item.priceMax) || 0;
+
+      if (min > 0 && max > 0) {
+        if (min === max) return formatManwonToKorean(min);
+        return `${formatManwonToKorean(min)} ~ ${formatManwonToKorean(max)}`;
+      } else if (min > 0) {
+        return `${formatManwonToKorean(min)}`;
+      } else if (max > 0) {
+        return `~ ${formatManwonToKorean(max)}`;
+      }
+      return "시세 미입력";
+    }
+
+    // 초기 샘플 데이터 (실거주/스펙 중심 & 가격 범위 지원)
+    const SAMPLE_NOTES = [
+      {
+        id: "note_sample_1",
+        name: "마포래미안푸르지오",
+        location: "서울 마포구 아현동",
+        visitDate: "2026-10-18",
+        buildYear: 2014,
+        householdCount: 3885,
+        parkingRatio: 1.18,
+        areaInfo: "34평 (84㎡)",
+        priceMin: 180000,
+        priceMax: 195000,
+        ratings: { traffic: 5, school: 4, infra: 4 },
+        pros: "애오개역·아현역 더블역세권, 대단지 평지 프리미엄, 우수한 커뮤니티 시설",
+        cons: "세대당 주차대수(1.18대)로 야간 주차 다소 혼잡, 단지 인근 경사 일부 존재",
+        summary: "교통과 직주근접 최고 수준. 아현초 도보 통학 편리하며 실거주 만족도 매우 높음."
+      },
+      {
+        id: "note_sample_2",
+        name: "헬리오시티",
+        location: "서울 송파구 가락동",
+        visitDate: "2026-10-25",
+        buildYear: 2018,
+        householdCount: 9510,
+        parkingRatio: 1.32,
+        areaInfo: "33평 (84㎡)",
+        priceMin: 210000,
+        priceMax: 225000,
+        ratings: { traffic: 4, school: 5, infra: 5 },
+        pros: "9,510세대 메머드급 대단지, 가락초·해누리초품아, 단지 내 대형 상가 완비",
+        cons: "동별 송파역 접근성 편차 심함, 단지 내부가 너무 넓어 이동 시간 소요",
+        summary: "초등 자녀 양육 환경 최상. 단지 내 조경 및 보행로 쾌적하며 상권 인프라 매우 우수함."
+      }
+    ];
+
+    // 데이터 로드
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            imjangNotes = parsed;
+          }
+        } catch (e) {
+          console.error("데이터 파싱 오류:", e);
+          imjangNotes = [];
+        }
+      } else {
+        imjangNotes = [];
+      }
+      renderNotes();
+      updateHeroSummary();
+    }
+
+    // 샘플 데이터 로드
+    function loadSampleData() {
+      imjangNotes = [...SAMPLE_NOTES];
+      saveData();
+      renderNotes();
+      updateHeroSummary();
+    }
+
+    // 데이터 저장
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(imjangNotes));
+    }
+
+    // 상단 Hero 통계 업데이트
+    function updateHeroSummary() {
+      const elCount = document.getElementById("heroTotalCount");
+      const elAvgPrice = document.getElementById("heroAvgPrice");
+      const elAvgScore = document.getElementById("heroAvgScore");
+      const elAvgParking = document.getElementById("heroAvgParking");
+      const elLatestDate = document.getElementById("heroLatestDate");
+
+      const total = imjangNotes.length;
+      elCount.innerText = `${total}곳`;
+
+      if (total === 0) {
+        elAvgPrice.innerText = "-";
+        elAvgScore.innerText = "-";
+        elAvgParking.innerText = "-";
+        elLatestDate.innerText = "최근 임장: -";
+        return;
+      }
+
+      let sumPrice = 0;
+      let validPriceCount = 0;
+      let sumScore = 0;
+      let sumParking = 0;
+      let validParkingCount = 0;
+      let latestDate = "";
+
+      imjangNotes.forEach(item => {
+        const minP = Number(item.priceMin || item.priceBuy) || 0;
+        const maxP = Number(item.priceMax) || 0;
+        let midPrice = 0;
+        if (minP > 0 && maxP > 0) midPrice = (minP + maxP) / 2;
+        else if (minP > 0) midPrice = minP;
+        else if (maxP > 0) midPrice = maxP;
+
+        if (midPrice > 0) {
+          sumPrice += midPrice;
+          validPriceCount++;
+        }
+
+        if (item.parkingRatio && Number(item.parkingRatio) > 0) {
+          sumParking += Number(item.parkingRatio);
+          validParkingCount++;
+        }
+        const r = item.ratings || { traffic: 3, school: 3, infra: 3 };
+        const score = (r.traffic + r.school + r.infra) / 3;
+        sumScore += score;
+
+        if (item.visitDate && (!latestDate || item.visitDate > latestDate)) {
+          latestDate = item.visitDate;
+        }
+      });
+
+      const avgPrice = validPriceCount > 0 ? sumPrice / validPriceCount : 0;
+      const avgScore = sumScore / total;
+      const avgParking = validParkingCount > 0 ? (sumParking / validParkingCount).toFixed(2) : "-";
+
+      elAvgPrice.innerText = formatManwonToKorean(avgPrice);
+      elAvgScore.innerText = `⭐ ${avgScore.toFixed(1)}`;
+      elAvgParking.innerText = avgParking !== "-" ? `${avgParking}대` : "-";
+      elLatestDate.innerText = latestDate ? `최근 임장: ${latestDate.slice(5)}` : "최근 임장: -";
+    }
+
+    // 정렬 & 필터링 처리
+    function getFilteredAndSortedNotes() {
+      const keyword = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+      const sortBy = document.getElementById("sortSelect").value;
+
+      let list = imjangNotes.filter(item => {
+        if (!keyword) return true;
+        const name = (item.name || "").toLowerCase();
+        const loc = (item.location || "").toLowerCase();
+        const summary = (item.summary || "").toLowerCase();
+        return name.includes(keyword) || loc.includes(keyword) || summary.includes(keyword);
+      });
+
+      list.sort((a, b) => {
+        const scoreA = ((a.ratings?.traffic || 3) + (a.ratings?.school || 3) + (a.ratings?.infra || 3)) / 3;
+        const scoreB = ((b.ratings?.traffic || 3) + (b.ratings?.school || 3) + (b.ratings?.infra || 3)) / 3;
+        const priceMinA = Number(a.priceMin || a.priceBuy) || 0;
+        const priceMinB = Number(b.priceMin || b.priceBuy) || 0;
+        const priceMaxA = Number(a.priceMax || a.priceMin || a.priceBuy) || 0;
+        const priceMaxB = Number(b.priceMax || b.priceMin || b.priceBuy) || 0;
+
+        switch (sortBy) {
+          case "latest":
+            return (b.visitDate || "").localeCompare(a.visitDate || "");
+          case "score_desc":
+            return scoreB - scoreA;
+          case "price_asc":
+            return priceMinA - priceMinB;
+          case "price_desc":
+            return priceMaxB - priceMaxA;
+          case "household_desc":
+            return (Number(b.householdCount) || 0) - (Number(a.householdCount) || 0);
+          case "parking_desc":
+            return (Number(b.parkingRatio) || 0) - (Number(a.parkingRatio) || 0);
+          default:
+            return 0;
+        }
+      });
+
+      return list;
+    }
+
+    // 카드 목록 렌더링
+    function renderNotes() {
+      const container = document.getElementById("noteListContainer");
+      const list = getFilteredAndSortedNotes();
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="15" y2="15"></line>
+              </svg>
+            </div>
+            <div class="empty-title">등록된 아파트 임장노트가 없습니다</div>
+            <div class="empty-desc">발품 팔아 다녀온 단지의 매매 호가 범위(7억~8억)와 세대당 주차대수, 3대 입지 평점을 기록해보세요!</div>
+            <button type="button" class="btn-sample" onclick="loadSampleData()">체험용 샘플 데이터 불러오기</button>
+          </div>
+        `;
+        updateFloatingCompareBar();
+        return;
+      }
+
+      const curYear = new Date().getFullYear();
+
+      container.innerHTML = list.map((item, idx) => {
+        const isSelected = selectedNoteIds.has(item.id);
+        const r = item.ratings || { traffic: 3, school: 3, infra: 3 };
+        const totalScore = ((r.traffic + r.school + r.infra) / 3).toFixed(1);
+        
+        // 연식 계산
+        let ageText = "";
+        if (item.buildYear) {
+          const age = curYear - Number(item.buildYear) + 1;
+          ageText = `${item.buildYear}년 (${age}년차)`;
+        }
+
+        return `
+          <div class="note-card ${isSelected ? 'selected' : ''}" id="card_${item.id}">
+            <div class="card-top">
+              <div class="card-title-wrap">
+                <input type="checkbox" class="compare-checkbox" 
+                  ${isSelected ? 'checked' : ''} 
+                  onchange="toggleSelectNote('${item.id}', this.checked)" 
+                  title="비교 단지 선택" />
+                <div class="card-title-info">
+                  <div class="card-name">${escapeHtml(item.name || "단지명 미입력")}</div>
+                  <div class="card-loc">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                      <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    ${escapeHtml(item.location || "지역 정보 없음")}
+                  </div>
+                </div>
+              </div>
+              <div class="score-badge">
+                <span>⭐</span>
+                <span>${totalScore}</span>
+              </div>
+            </div>
+
+            <!-- 스펙 배지 (연식, 세대수, 주차대수, 평형) -->
+            <div class="spec-tags-row">
+              ${ageText ? `<span class="spec-tag">📅 ${ageText}</span>` : ''}
+              ${item.householdCount ? `<span class="spec-tag">🏢 ${Number(item.householdCount).toLocaleString()}세대</span>` : ''}
+              ${item.parkingRatio ? `<span class="spec-tag spec-tag-parking">🚗 주차 ${item.parkingRatio}대</span>` : ''}
+              ${item.areaInfo ? `<span class="spec-tag spec-tag-highlight">📐 ${escapeHtml(item.areaInfo)}</span>` : ''}
+            </div>
+
+            <!-- 매매가 범위 및 임장일자 박스 -->
+            <div class="price-box">
+              <div class="price-left">
+                <span class="price-label">매매 호가 범위</span>
+                <span class="price-val">${formatPriceRange(item)}</span>
+              </div>
+              <span class="visit-date-badge">임장 ${item.visitDate || "-"}</span>
+            </div>
+
+            <!-- 3대 입지 평점 바 (교통, 학군, 상권) -->
+            <div class="ratings-preview">
+              <div class="rating-col">
+                <span class="rating-label">🚇 교통</span>
+                <span class="rating-stars">${'★'.repeat(r.traffic || 3)}${'☆'.repeat(5 - (r.traffic || 3))}</span>
+              </div>
+              <div class="rating-col">
+                <span class="rating-label">🏫 학군</span>
+                <span class="rating-stars">${'★'.repeat(r.school || 3)}${'☆'.repeat(5 - (r.school || 3))}</span>
+              </div>
+              <div class="rating-col">
+                <span class="rating-label">🛒 상권</span>
+                <span class="rating-stars">${'★'.repeat(r.infra || 3)}${'☆'.repeat(5 - (r.infra || 3))}</span>
+              </div>
+            </div>
+
+            <!-- 한줄 메모/총평 -->
+            ${item.summary ? `<div class="card-memo">💬 ${escapeHtml(item.summary)}</div>` : ''}
+
+            <!-- 푸터 액션 -->
+            <div class="card-footer">
+              <div class="card-date">
+                <span>등록순 #${list.length - idx}</span>
+              </div>
+              <div class="card-actions">
+                <button type="button" class="btn-card-action" onclick="editNote('${item.id}')">수정</button>
+                <button type="button" class="btn-card-action btn-card-del" onclick="deleteNote('${item.id}')">삭제</button>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join("");
+
+      updateFloatingCompareBar();
+    }
+
+    // 비교 체크박스 토글
+    function toggleSelectNote(id, checked) {
+      if (checked) {
+        selectedNoteIds.add(id);
+      } else {
+        selectedNoteIds.delete(id);
+      }
+      const card = document.getElementById(`card_${id}`);
+      if (card) {
+        if (checked) card.classList.add("selected");
+        else card.classList.remove("selected");
+      }
+      updateFloatingCompareBar();
+    }
+
+    // 전체 선택/해제 토글
+    function toggleSelectAll() {
+      const list = getFilteredAndSortedNotes();
+      const allSelected = list.every(item => selectedNoteIds.has(item.id));
+      if (allSelected) {
+        list.forEach(item => selectedNoteIds.delete(item.id));
+        document.getElementById("selectAllText").innerText = "전체 선택";
+      } else {
+        list.forEach(item => selectedNoteIds.add(item.id));
+        document.getElementById("selectAllText").innerText = "선택 해제";
+      }
+      renderNotes();
+    }
+
+    // 플로팅 비교 바 업데이트
+    function updateFloatingCompareBar() {
+      const bar = document.getElementById("floatingCompareBar");
+      const badge = document.getElementById("selectedCountBadge");
+      const count = selectedNoteIds.size;
+      badge.innerText = count;
+
+      if (count >= 2) {
+        bar.classList.add("show");
+      } else {
+        bar.classList.remove("show");
+      }
+    }
+
+    // 검색/정렬 변경 핸들러
+    function onSearchOrFilterChange() {
+      renderNotes();
+    }
+
+    // ==========================================
+    // 단지 등록 / 수정 모달 로직
+    // ==========================================
+    function openCreateModal() {
+      document.getElementById("formModalTitle").innerText = "아파트 임장 등록";
+      document.getElementById("editItemIndex").value = "-1";
+
+      // 필드 초기화
+      document.getElementById("fComplexName").value = "";
+      document.getElementById("fLocation").value = "";
+      document.getElementById("fVisitDate").value = new Date().toISOString().slice(0, 10);
+      document.getElementById("fBuildYear").value = "";
+      document.getElementById("fHouseholdCount").value = "";
+      document.getElementById("fParkingRatio").value = "";
+      document.getElementById("fAreaInfo").value = "34평 (전용 84㎡)";
+      document.getElementById("fPriceMin").value = "";
+      document.getElementById("fPriceMax").value = "";
+      document.getElementById("fPros").value = "";
+      document.getElementById("fCons").value = "";
+      document.getElementById("fSummary").value = "";
+
+      // 평점 기본값 3점
+      currentRatings = { traffic: 3, school: 3, infra: 3 };
+      renderStarButtons();
+      updateCalculatedSpans();
+
+      document.getElementById("formModalOverlay").classList.add("open");
+    }
+
+    function editNote(id) {
+      const item = imjangNotes.find(n => n.id === id);
+      if (!item) return;
+
+      document.getElementById("formModalTitle").innerText = "임장 정보 수정";
+      document.getElementById("editItemIndex").value = id;
+
+      document.getElementById("fComplexName").value = item.name || "";
+      document.getElementById("fLocation").value = item.location || "";
+      document.getElementById("fVisitDate").value = item.visitDate || "";
+      document.getElementById("fBuildYear").value = item.buildYear || "";
+      document.getElementById("fHouseholdCount").value = item.householdCount || "";
+      document.getElementById("fParkingRatio").value = item.parkingRatio || "";
+      document.getElementById("fAreaInfo").value = item.areaInfo || "";
+      document.getElementById("fPriceMin").value = item.priceMin || item.priceBuy || "";
+      document.getElementById("fPriceMax").value = item.priceMax || "";
+      document.getElementById("fPros").value = item.pros || "";
+      document.getElementById("fCons").value = item.cons || "";
+      document.getElementById("fSummary").value = item.summary || "";
+
+      currentRatings = item.ratings ? { ...item.ratings } : { traffic: 3, school: 3, infra: 3 };
+      renderStarButtons();
+      updateCalculatedSpans();
+
+      document.getElementById("formModalOverlay").classList.add("open");
+    }
+
+    function closeFormModal() {
+      document.getElementById("formModalOverlay").classList.remove("open");
+    }
+
+    // 별점 세팅
+    function setRating(category, score) {
+      currentRatings[category] = score;
+      renderStarButtons();
+      updateCalculatedSpans();
+    }
+
+    function renderStarButtons() {
+      ['traffic', 'school', 'infra'].forEach(cat => {
+        const val = currentRatings[cat] || 3;
+        const group = document.getElementById(`stars${cat.charAt(0).toUpperCase() + cat.slice(1)}`);
+        if (group) {
+          const btns = group.querySelectorAll(".star-btn");
+          btns.forEach((btn, idx) => {
+            if (idx + 1 <= val) btn.classList.add("active");
+            else btn.classList.remove("active");
+          });
+        }
+      });
+    }
+
+    // 모달 내 실시간 자동 계산 & 힌트 업데이트
+    function updateCalculatedSpans() {
+      const minVal = Number(document.getElementById("fPriceMin").value) || 0;
+      const maxVal = Number(document.getElementById("fPriceMax").value) || 0;
+      const buildYear = Number(document.getElementById("fBuildYear").value) || 0;
+      const curYear = new Date().getFullYear();
+
+      // 한글 금액 범위 힌트
+      const hint = document.getElementById("hintPriceRange");
+      if (minVal > 0 && maxVal > 0) {
+        if (minVal === maxVal) hint.innerText = `👉 ${formatManwonToKorean(minVal)}`;
+        else hint.innerText = `👉 ${formatManwonToKorean(minVal)} ~ ${formatManwonToKorean(maxVal)}`;
+      } else if (minVal > 0) {
+        hint.innerText = `👉 ${formatManwonToKorean(minVal)}`;
+      } else if (maxVal > 0) {
+        hint.innerText = `👉 ~ ${formatManwonToKorean(maxVal)}`;
+      } else {
+        hint.innerText = "";
+      }
+
+      // 연식 힌트
+      const hintYear = document.getElementById("hintBuildYear");
+      if (buildYear > 1900 && buildYear <= curYear + 3) {
+        hintYear.innerText = `${curYear - buildYear + 1}년차 아파트`;
+      } else {
+        hintYear.innerText = "";
+      }
+
+      // 종합 평점 미리보기
+      const avg = ((currentRatings.traffic + currentRatings.school + currentRatings.infra) / 3).toFixed(1);
+      document.getElementById("spanTotalScorePreview").innerText = `⭐ ${avg} / 5.0`;
+    }
+
+    // 폼 저장
+    function saveFormItem() {
+      const name = document.getElementById("fComplexName").value.trim();
+      if (!name) {
+        alert("단지명을 입력해주세요.");
+        document.getElementById("fComplexName").focus();
+        return;
+      }
+
+      const parkingRatio = document.getElementById("fParkingRatio").value;
+      if (!parkingRatio) {
+        alert("세대당 주차대수를 입력해주세요.");
+        document.getElementById("fParkingRatio").focus();
+        return;
+      }
+
+      const editId = document.getElementById("editItemIndex").value;
+      const isNew = editId === "-1";
+
+      const priceMin = document.getElementById("fPriceMin").value ? Number(document.getElementById("fPriceMin").value) : null;
+      const priceMax = document.getElementById("fPriceMax").value ? Number(document.getElementById("fPriceMax").value) : null;
+
+      const newItem = {
+        id: isNew ? "note_" + Date.now() : editId,
+        name: name,
+        location: document.getElementById("fLocation").value.trim(),
+        visitDate: document.getElementById("fVisitDate").value,
+        buildYear: document.getElementById("fBuildYear").value ? Number(document.getElementById("fBuildYear").value) : null,
+        householdCount: document.getElementById("fHouseholdCount").value ? Number(document.getElementById("fHouseholdCount").value) : null,
+        parkingRatio: Number(parkingRatio) || 0,
+        areaInfo: document.getElementById("fAreaInfo").value.trim(),
+        priceMin: priceMin,
+        priceMax: priceMax,
+        priceBuy: priceMin || priceMax, // 이전 버전 호환성 유지
+        ratings: { ...currentRatings },
+        pros: document.getElementById("fPros").value.trim(),
+        cons: document.getElementById("fCons").value.trim(),
+        summary: document.getElementById("fSummary").value.trim()
+      };
+
+      if (isNew) {
+        imjangNotes.unshift(newItem);
+      } else {
+        const idx = imjangNotes.findIndex(n => n.id === editId);
+        if (idx !== -1) {
+          imjangNotes[idx] = newItem;
+        }
+      }
+
+      saveData();
+      closeFormModal();
+      renderNotes();
+      updateHeroSummary();
+    }
+
+    // 단지 삭제
+    function deleteNote(id) {
+      const item = imjangNotes.find(n => n.id === id);
+      const name = item ? item.name : "단지";
+      if (!confirm(`'${name}' 임장노트를 삭제하시겠습니까?`)) return;
+
+      imjangNotes = imjangNotes.filter(n => n.id !== id);
+      selectedNoteIds.delete(id);
+      saveData();
+      renderNotes();
+      updateHeroSummary();
+    }
+
+    // ==========================================
+    // 비교 분석 모달 로직
+    // ==========================================
+    function openComparisonModal() {
+      const selectedList = imjangNotes.filter(n => selectedNoteIds.has(n.id));
+      if (selectedList.length < 2) {
+        alert("비교할 단지를 2개 이상 선택해주세요.");
+        return;
+      }
+
+      renderCompareTable(selectedList);
+      document.getElementById("compareModalOverlay").classList.add("open");
+    }
+
+    function closeCompareModal() {
+      document.getElementById("compareModalOverlay").classList.remove("open");
+    }
+
+    function renderCompareTable(notes) {
+      const container = document.getElementById("compareTableContainer");
+      const curYear = new Date().getFullYear();
+
+      // 최고/최저 수치 계산 (하이라이트용)
+      const maxScore = Math.max(...notes.map(n => ((n.ratings?.traffic || 3) + (n.ratings?.school || 3) + (n.ratings?.infra || 3)) / 3));
+      const minBuyPrice = Math.min(...notes.map(n => Number(n.priceMin || n.priceBuy) || Infinity));
+      const maxParking = Math.max(...notes.map(n => Number(n.parkingRatio) || 0));
+      const maxHousehold = Math.max(...notes.map(n => Number(n.householdCount) || 0));
+
+      let html = `<table class="compare-table"><thead><tr><th style="min-width:90px;">항목</th>`;
+      notes.forEach(n => {
+        html += `<th class="col-header">${escapeHtml(n.name)}</th>`;
+      });
+      html += `</tr></thead><tbody>`;
+
+      // 1. 기본 위치 및 평형
+      html += `<tr><td class="row-category" colspan="${notes.length + 1}">📍 기본 단지 스펙</td></tr>`;
+      
+      html += `<tr><th>지역</th>`;
+      notes.forEach(n => { html += `<td>${escapeHtml(n.location || "-")}</td>`; });
+      html += `</tr>`;
+
+      html += `<tr><th>평형</th>`;
+      notes.forEach(n => { html += `<td>${escapeHtml(n.areaInfo || "-")}</td>`; });
+      html += `</tr>`;
+
+      html += `<tr><th>연식(준공)</th>`;
+      notes.forEach(n => {
+        const age = n.buildYear ? `${n.buildYear}년 (${curYear - n.buildYear + 1}년차)` : "-";
+        html += `<td>${age}</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>세대수</th>`;
+      notes.forEach(n => {
+        const count = Number(n.householdCount) || 0;
+        const isBest = count === maxHousehold && count > 0;
+        html += `<td class="${isBest ? 'highlight-best' : ''}">${count > 0 ? `${count.toLocaleString()}세대` : '-'} ${isBest ? '<span class="best-badge">최대</span>' : ''}</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>세대당 주차</th>`;
+      notes.forEach(n => {
+        const p = Number(n.parkingRatio) || 0;
+        const isBest = p === maxParking && p > 0;
+        html += `<td class="${isBest ? 'highlight-best' : ''}">${p > 0 ? `${p}대` : '-'} ${isBest ? '<span class="best-badge">주차 1위</span>' : ''}</td>`;
+      });
+      html += `</tr>`;
+
+      // 2. 가격 정보 (호가 범위)
+      html += `<tr><td class="row-category" colspan="${notes.length + 1}">💰 시세 (매매 호가 범위)</td></tr>`;
+
+      html += `<tr><th>호가 범위</th>`;
+      notes.forEach(n => {
+        const minP = Number(n.priceMin || n.priceBuy) || 0;
+        const isBest = minP === minBuyPrice && minP < Infinity && minP > 0;
+        html += `<td class="${isBest ? 'highlight-best' : ''}">${formatPriceRange(n)} ${isBest ? '<span class="best-badge">최저가</span>' : ''}</td>`;
+      });
+      html += `</tr>`;
+
+      // 3. 핵심 입지 평가
+      html += `<tr><td class="row-category" colspan="${notes.length + 1}">⭐ 3대 입지 평점</td></tr>`;
+
+      html += `<tr><th>종합 평점</th>`;
+      notes.forEach(n => {
+        const r = n.ratings || { traffic: 3, school: 3, infra: 3 };
+        const score = ((r.traffic + r.school + r.infra) / 3);
+        const isBest = Math.abs(score - maxScore) < 0.01;
+        html += `<td class="${isBest ? 'highlight-best' : ''}" style="font-size:0.9rem;">⭐ ${score.toFixed(1)} ${isBest ? '<span class="best-badge">최고점</span>' : ''}</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>🚇 교통</th>`;
+      notes.forEach(n => {
+        const val = n.ratings?.traffic || 3;
+        html += `<td>${val}점 (${'★'.repeat(val)})</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>🏫 학군</th>`;
+      notes.forEach(n => {
+        const val = n.ratings?.school || 3;
+        html += `<td>${val}점 (${'★'.repeat(val)})</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>🛒 상권</th>`;
+      notes.forEach(n => {
+        const val = n.ratings?.infra || 3;
+        html += `<td>${val}점 (${'★'.repeat(val)})</td>`;
+      });
+      html += `</tr>`;
+
+      // 4. 현장 장단점 및 총평
+      html += `<tr><td class="row-category" colspan="${notes.length + 1}">📝 현장 총평 및 장단점</td></tr>`;
+
+      html += `<tr><th>👍 장점</th>`;
+      notes.forEach(n => {
+        html += `<td style="text-align:left; font-size:0.73rem; color:#15803d;">${escapeHtml(n.pros || "-")}</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>👎 단점</th>`;
+      notes.forEach(n => {
+        html += `<td style="text-align:left; font-size:0.73rem; color:#b91c1c;">${escapeHtml(n.cons || "-")}</td>`;
+      });
+      html += `</tr>`;
+
+      html += `<tr><th>한줄 총평</th>`;
+      notes.forEach(n => {
+        html += `<td style="text-align:left; font-size:0.74rem; font-weight:600;">${escapeHtml(n.summary || "-")}</td>`;
+      });
+      html += `</tr>`;
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+    }
+
+    // 모달 배경 클릭 시 닫기
+    function handleOverlayClick(event, overlayId) {
+      if (event.target.id === overlayId) {
+        document.getElementById(overlayId).classList.remove("open");
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // 페이지 초기화
+    window.addEventListener("DOMContentLoaded", () => {
+      loadData();
+    });
+  </script>
+</body>
+</html>
